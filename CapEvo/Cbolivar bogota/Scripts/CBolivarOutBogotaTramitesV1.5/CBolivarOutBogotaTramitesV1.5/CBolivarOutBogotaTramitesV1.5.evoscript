@@ -15,7 +15,7 @@
     <RemoteService>https://servercol011.fenalcovalle.com.co/Evolution/DeveloperService/DeveloperService.svc</RemoteService>
     <UserName>NCADMIN</UserName>
     <UserPassword>0xBEE185D4E2189DFD3CB2A6175A97012E</UserPassword>
-    <Name>CBolivarOutBogotaTramitesV1.4</Name>
+    <Name>CBolivarOutBogotaTramitesV1.5</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DebugSymbols>false</DebugSymbols>

@@ -142,10 +142,6 @@
 <script runat="server">
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         DatosCliente_TextBox8.TextValue = Gestion.Transaccion.IdTransaccion.ToString
-        Dim telefono As String = Request("telefon")
-        If telefono Then
-            DatosCliente_TextBox6.TextValue = telefono
-        End If
     End Sub
     
     Protected Sub actualizarcliente(ByVal sender As Object, ByVal e As System.EventArgs)

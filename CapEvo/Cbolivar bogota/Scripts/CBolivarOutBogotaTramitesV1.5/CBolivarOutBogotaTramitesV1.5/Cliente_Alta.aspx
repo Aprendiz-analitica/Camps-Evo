@@ -4,15 +4,19 @@
      Dim IdSujeto As Long = -1
      
      'Parámetros pasados por GET en la url
-     Dim IdOriginal As String = ""
+     Dim IdOriginal As String = Request("numdoc")
      Dim Nombre As String = "Sin_Nombre"
      Dim Apellido1 As String = "Sin_Apellido"
      Dim Telefono As String = Request("telefon")
-     
+
      Try
 
          IdSujeto = Clientes.AltaCliente(Gestion.Campanya.IdCampanya, "1", IdOriginal, Nombre, Apellido1, tipId:=0, localizableDesde:=0, localizableHasta:=2359, telefono:=Telefono)
 
+         If String.IsNullOrWhiteSpace(Telefono) Then
+             Telefono = "0"
+         End If
+         
          If IdSujeto <> -1 Then
              Gestion.CargaCliente(IdSujeto)
              EvoAPI.LoadCustomer(IdSujeto)
@@ -38,6 +42,7 @@
     agentapi.WebAgentAuthToken = "<%=AgentApp.WebAgentAuthToken%>";
     agentapi.WebAgentServiceUrl = "<%=AgentApp.WebAgentServiceUrl%>";
     agentapi.SetCustomer(<%= Gestion.Transaccion.IdTransaccion %> , <%= Gestion.Cliente.IdSujeto %>);
-    window.location.href='CrearCliente.aspx?telefon='+Telefono;
+    window.location.href = 'CrearCliente.aspx';
+
 
 </script>

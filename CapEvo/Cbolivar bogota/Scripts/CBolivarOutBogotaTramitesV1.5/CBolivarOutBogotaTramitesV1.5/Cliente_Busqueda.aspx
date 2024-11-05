@@ -189,7 +189,8 @@
     
     Protected Sub Nuevo_OnClick(ByVal sender As Object, ByVal e As System.EventArgs)
         Dim telefon As String = telefonoevo.Text
-        Response.Redirect("Cliente_Alta.aspx?telefon=" + telefon)
+        Dim numdoc As String = numdocevo.Text        
+        Response.Redirect("Cliente_Alta.aspx?telefon=" + telefon + "&numdoc=" + numdoc)
                   
     End Sub
 
