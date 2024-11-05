@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<strategy_script version="1.0" name="Main" >
+
+
+	<block name="main" >
+		<timeconditions label="HorarioAtencion " property="in_service">
+			<timecondition time_start="07:00" time_finish="17:00" week_day_start="1" week_day_finish="5" />
+			<timecondition time_start="08:00" time_finish="12:00" week_day_start="6" week_day_finish="6" />
+		</timeconditions> 
+		<timeconditions label="DiasFestivos" property="non_working_day">
+			<timecondition month_day="1" month="1" />
+			<timecondition month_day="8" month="1" />
+			<timecondition month_day="25" month="3" />
+			<timecondition month_day="28" month="3" />
+			<timecondition month_day="29" month="3" />
+			<timecondition month_day="1" month="5" />
+			<timecondition month_day="13" month="5" />
+			<timecondition month_day="3" month="6" />
+			<timecondition month_day="10" month="6" />
+			<timecondition month_day="1" month="7" />
+			<timecondition month_day="20" month="7" />
+			<timecondition month_day="7" month="8" />
+			<timecondition month_day="19" month="8" />
+			<timecondition month_day="14" month="10" />
+			<timecondition month_day="4" month="11" />
+			<timecondition month_day="11" month="11" />
+			<timecondition month_day="8" month="12" />
+			<timecondition month_day="25" month="12" />
+		</timeconditions> 
+		<goto if_condition="${not in_service or non_working_day}" block="main" task_label="bucle" /> 
+		<property label="AudioPrincipal" name="interaction.transaction.closereason" value="106" /> 
+		<play filename="Resources/Audio/AUDIO 5.wav" /> 
+		<property label="PasoCampanyaFinal" name="interaction.transaction.closereason" value="106" /> 
+		<property label="DimeIn" name="idCampanya" value="100000218" /> 
+		<property name="telefono" value="${interaction.from}" /> 
+		<settransactionvalue key="numtel" value="${telefono}" /> 
+		<call block="Identificar_Cliente" /> 
+		<queue idagent="${strategy.idagent}" priority="${strategy.priority}" handicap="${strategy.handicap}" idcustomer="${id_sujeto}" idcampaign="${idCampanya}" /> 
+		<property name="interaction.transaction.closereason" value="10" /> 
+		<give_music /> 
+		<sleep seconds="25" /> 
+		<property label="SolicitudCallBackCola" name="interaction.transaction.closereason" value="107" /> 
+		<property label="bucle2" name="bucle" value="0" /> 
+		<play_and_get_digits filename="Resources/Audio/AudioCola.wav" received_digits_property="MenuCola" timeout="3" /> 
+		<goto if_condition="${MenuCola=='1'}" block="main" task_label="AceptaCallBackCola" /> 
+		<property label="NoAceptaCallBackCola" name="interaction.transaction.closereason" value="108" /> 
+		<goto block="main" task_label="DimeIn" /> 
+		<break /> 
+		<property label="bucle1" name="bucle3" value="${int::parse(bucle) + 1}" /> 
+		<goto label="goto1" if_condition="${int::parse(bucle) &lt; 3}" block="main" task_label="play_and_get_digits1" /> 
+		<property label="ErrorCallback" name="interaction.transaction.closereason" value="105" /> 
+		<hangup /> 
+		<break /> 
+		<property label="bucle" name="bucle" value="0" /> 
+		<property label="FueraHorarios" name="interaction.transaction.closereason" value="100" /> 
+		<play filename="Resources/Audio/Horario atencion.wav" /> 
+		<property label="SolicitudCallBack" name="interaction.transaction.closereason" value="102" /> 
+		<play_and_get_digits filename="Resources/Audio/AudioFH.wav" received_digits_property="MenuFH" timeout="3" /> 
+		<goto if_condition="${MenuFH=='1'}" block="main" task_label="AceptaCallBack" /> 
+		<property label="NoAceptaCallBack" name="interaction.transaction.closereason" value="101" /> 
+		<hangup /> 
+		<break /> 
+		<property label="bucle3" name="bucle" value="${int::parse(bucle) + 1}" /> 
+		<goto label="goto2" if_condition="${int::parse(bucle) &lt; 3}" block="main" task_label="play_and_get_digits2" /> 
+		<property label="ErrorCallbackCola" name="interaction.transaction.closereason" value="111" /> 
+		<hangup /> 
+		<break /> 
+		<property label="AceptaCallBack" name="interaction.transaction.closereason" value="103" /> 
+		<play_and_get_digits label="play_and_get_digits1" filename="Resources/Audio/Digite Cel.wav" received_digits_property="TelCallBack" attempts="2" timeout="5" /> 
+		<goto if_condition="${TelCallBack==''}" block="main" task_label="bucle1" /> 
+		<sql label="sql1" statement="insert into __callback_Dime (idTransaction,telefono,estado) values (${interaction.idtransaction},'${TelCallBack}','Abierto')" /> 
+		<property label="RegistroCallBack" name="interaction.transaction.closereason" value="104" /> 
+		<play filename="Resources/Audio/NumRegistrado.wav" /> 
+		<hangup /> 
+		<break /> 
+		<property label="AceptaCallBackCola" name="interaction.transaction.closereason" value="109" /> 
+		<play_and_get_digits label="play_and_get_digits2" filename="Resources/Audio/Digite Cel.wav" received_digits_property="TelCallBack" attempts="2" timeout="5" /> 
+		<goto if_condition="${TelCallBack==''}" block="main" task_label="bucle3" /> 
+		<sql label="sql2" statement="insert into __callback_Dime (idTransaction,telefono,estado) values (${interaction.idtransaction},'${TelCallBack}','Abierto')" /> 
+		<property label="RegistroCallBackCola" name="interaction.transaction.closereason" value="110" /> 
+		<play filename="Resources/Audio/NumRegistrado.wav" /> 
+		<hangup /> 
+	</block>
+	<block name="Identificar_Cliente" >
+		<property name="id_sujeto" value="0" /> 
+		<sql label="sql1" statement="DECLARE @numtel VARCHAR(20);&#xD;&#xA;DECLARE @idCampanya  NUMERIC(10,0);&#xD;&#xA;SET @idCampanya= ${idCampanya}&#xD;&#xA;SET @numtel = ${interaction.from}&#xD;&#xA;&#xD;&#xA;SELECT C.idsujeto as idsujeto FROM clientes C JOIN tbidentidadsujetocampanya ISC on C.idsujeto=ISC.idsujeto &#xD;&#xA;       WHERE (ISC.IDCAMPANYA =@idCampanya And c.idsujeto &gt;= 0) AND&#xD;&#xA;                c.TELEFONO=@numtel;" cmdtimeout="10" result_refid="Sujeto_refid" /> 
+		<property if_condition="${ data-table-type::get-row-count( 'Sujeto_refid' )  &gt; 0 }" name="id_sujeto" value="${ data-table-type::get-value( 'Sujeto_refid', 0 ,'idsujeto') }" /> 
+		<echo label="echo1" message="idSujeto for ${interaction.from} is ${id_sujeto}" /> 
+	</block>
+
+</strategy_script>

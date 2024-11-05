@@ -1,0 +1,472 @@
+﻿<%@ Master Language="VB" AutoEventWireup="false" %>
+
+<%@ Register Assembly="VisualEvolutionLibrary" Namespace="Icr.Evolution.VisualEvolutionLibrary"
+    TagPrefix="evo" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<%
+    Response.CacheControl = "No-Cache"
+    Response.AddHeader("Pragma", "No-Cache")
+    Response.Expires = 0
+ %>
+
+<html xmlns="http://www.w3.org/1999/xhtml" >
+
+<head id="Head1" runat="server">
+    <title><asp:ContentPlaceHolder ID="TitleContent" runat="server" /></title>  
+
+    <link rel="Stylesheet" type="text/css" href="Resources/css/Script.css" />
+    <link rel="Stylesheet" type="text/css" href="Resources/css/Basico.css" />
+    <link rel="Stylesheet" type="text/css" href="Resources/css/bootstrap.css" />
+    <link rel="Stylesheet" type="text/css" href="Resources/css/styles.css" />
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script type="text/JavaScript" src="Resources/js/agentapi.js"></script>
+    <script type="text/JavaScript" src="Resources/js/timer.js"></script>
+    <script type="text/javascript" src="Resources/js/JQuery.js"></script>
+     
+    <script type="text/javascript">
+        agentapi.AgentAppType = "<%=AgentApp.AgentAppType%>";
+        agentapi.WebAgentAuthToken = "<%=AgentApp.WebAgentAuthToken%>";
+        agentapi.WebAgentServiceUrl = "<%=AgentApp.WebAgentServiceUrl%>";
+    </script>
+
+    <script type="text/javascript">
+
+        var idCall;
+        var token;
+        var url = "https://8aozurcink.execute-api.us-east-2.amazonaws.com";
+        var contadorPausas = 0;
+        var idllamadaHold = 0;
+                $(document).ready(function () {
+            $("#divTemporizador").hide();
+            var temp;
+            var settings = {
+                            "url": url+"/auth/login",
+                            "method": "POST",
+                            "timeout": 0,
+                            "headers": {
+                              "username": "UsrCBolivarBgta",
+                              "password": "*CB0L1b4RB0Gt4-O22."
+                            },
+                          };
+                   $.ajax(settings).done(function (response) {
+                     token = response.token;
+                    });        
+        });
+
+        function pausar() {
+                contadorPausas++; // incrementa el contador de pausas cada vez que se llama a esta función
+                var idllamada = <%= EvoAPI.Transaction.TransactionId%>;
+                idllamadaHold = idllamada * 10 + contadorPausas;
+                var fechaActual = new Date();
+                var year = fechaActual.getFullYear();
+                var month = (fechaActual.getMonth() + 1).toString().padStart(2, '0');
+                var day = fechaActual.getDate().toString().padStart(2, '0');
+                var fechaFormateada = `${year}-${month}-${day}`;
+                var horaActual = new Date().toLocaleTimeString('en-GB', {
+                    hour12: false,
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                var tinicio = fechaFormateada + ' ' + horaActual;
+                var idagente = <%= EvoAPI.Agent.AgentId%>;
+                var idcampanya = <%= EvoAPI.Campaign.CampaignId%>;  
+                agentapi.GetActiveCall()
+                .done(function (callId) {
+                    $("#divTemporizador").show();
+                    desactivarBoton();
+                    startTimer();
+                    idCall = callId;
+                    agentapi.Hold(idCall);
+                    var insertartinicio = {
+                        "url": url+"/webservicefenalco/cbolivarbgta/ingresartiemposhold",
+                        "method": "POST",
+                        "timeout": 0,
+                        "headers": {
+                        "Authorization": "Bearer "+ token,
+                        "Content-Type": "application/json"
+                        },
+                            "data": JSON.stringify({
+                                "idTransaccion": idllamada,
+                                "tInicio": tinicio,
+                                "tFinal": tinicio,
+                                "idAgente": idagente,
+                                "idCampanya": idcampanya,
+                                "idTransaccionHold": idllamadaHold,
+                                "bdEvoAws" : false
+                            }),
+                        };
+                    $.ajax(insertartinicio).done(function (response) {
+                         
+                    });
+                })
+                .fail(function (code, cause) {
+                    alert('Error al pausar la llamada activa:. Code:' + code + '. Cause:' + cause);
+                }); 
+
+        }
+
+        function recuperar() {
+                var fechaActual = new Date();
+                var year = fechaActual.getFullYear();
+                var month = (fechaActual.getMonth() + 1).toString().padStart(2, '0');
+                var day = fechaActual.getDate().toString().padStart(2, '0');
+                var fechaFormateada = `${year}-${month}-${day}`;
+                var horaActual = new Date().toLocaleTimeString('en-GB', {
+                    hour12: false,
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                var tfinal = fechaFormateada + ' ' + horaActual;
+            $("#divTemporizador").hide();
+            stopTimer();
+            agentapi.Retrieve(idCall)
+            .done(function () {
+                        var insertartfinal = {
+                        "url": url+"/webservicefenalco/cbolivarbgta/actualizartiemposhold",
+                        "method": "POST",
+                        "timeout": 0,
+                        "headers": {
+                        "Authorization": "Bearer "+ token,
+                        "Content-Type": "application/json"
+                        },
+                            "data": JSON.stringify({
+                                "tFinal": tfinal,
+                                "idTransaccionHold": idllamadaHold,
+                                "bdEvoAws" : false
+                            }),
+                        };
+                    $.ajax(insertartfinal).done(function (response) {
+                         
+                    });
+
+            })
+            .fail(function (code, cause) {
+             alert('RealizarLlamada falló. Code:'+ code + '. Cause:'+cause);
+            });
+            activarBoton();
+        }
+
+        function desactivarBoton() {
+            // Obtener el botón por su ID
+            var botones = document.querySelectorAll('[id^="ctl00_MainContent"]');
+            for (var i = 0; i < botones.length; i++) {
+                // Desactivar el botón actual
+                botones[i].disabled = true;
+            };
+        }
+        function activarBoton() {
+            var botones = document.querySelectorAll('[id^="ctl00_MainContent"]');
+            for (var i = 0; i < botones.length; i++) {
+                // Desactivar el botón actual
+                botones[i].disabled = false;
+            };
+        }
+        
+                   function Transf_Encuesta() {
+            agentapi.FastTransferActiveCall('6049')
+            .done(function () {
+            })
+            .fail(function (code, cause) {
+                alert('No se pudo realizar la Transferencia');
+            });
+        }
+            function Transf_AreaAdmin() {
+            agentapi.FastTransferActiveCall('*24900')
+            .done(function () {
+
+            })
+            .fail(function (code, cause) {
+                alert('No se pudo realizar la Transferencia');
+            });
+        }
+        function Transf_MenuBgta() {
+            agentapi.FastTransferActiveCall('6047')
+            .done(function () {
+
+            })
+            .fail(function (code, cause) {
+                alert('No se pudo realizar la Transferencia');
+            });
+        }
+
+
+        function Conferencia_v2() {
+            makeHttpRequest("ConferenciaAMI.aspx")
+            .done(function (response) {
+                                        Swal.fire({
+                                        title: 'Inicio de grabación exitoso',
+                                        text: 'Comience protocolo de HabeasData',
+                                        imageUrl: 'Resources/images/INIGRABHD.png',
+                                        confirmButtonColor: '#0C7834', 
+                                        imageWidth: 200,
+                                        imageHeight: 200,});
+            })
+            .fail(function (code, cause) {
+                alert("Envio ConferenciaAMI KO. Code: " + code + " , cause: " + cause);
+            });
+        }
+        function EnviarMsgDBR() {
+            makeHttpRequest("EnvioMsgDBR.aspx")
+            .done(function (response) {
+                                        Swal.fire({
+                                        title: 'Final de grabación exitoso',
+                                        text: 'HabeasData almacenado',
+                                        imageUrl: 'Resources/images/INIGRABHD.png',
+                                        confirmButtonColor: '#0C7834', 
+                                        imageWidth: 200,
+                                        imageHeight: 200,});
+            })
+            .fail(function (code, cause) {
+                alert("Envio MsgDBR KO. Code: " + code + " , cause: " + cause);
+            });
+        }
+
+        document.oncontextmenu = function () {
+            return false;
+        };
+        document.onkeydown = function (event) {
+            event = event || window.event;
+            var doPrevent = false;
+
+            if (event.keyCode == 116                     /* F5 - Refresh */ ||
+               (event.keyCode == 82 && event.ctrlKey)    /* CTRL + R - Refresh */ ||
+                event.keyCode == 8                       /* Backspace - Navigate back */ ||
+               (event.keyCode == 37 && event.altKey)     /* ALT + Left Arrow - Navigate back */ ||
+               (event.keyCode == 121 && event.shiftKey)  /* SHIFT + F10 - Context menu */) {
+
+                var d = event.srcElement || event.target;
+
+                if (event.keyCode == 8 && ((d.tagName.toUpperCase() === 'INPUT' && (d.type.toUpperCase() === 'TEXT' || d.type.toUpperCase() === 'PASSWORD')) || d.tagName.toUpperCase() === 'TEXTAREA')) {
+                    doPrevent = d.readOnly || d.disabled;
+                }
+                else {
+                    doPrevent = true;
+                }
+            }
+            if (doPrevent) {
+                event.preventDefault();
+            }
+
+            return true;
+        };
+            function makeHttpRequest(sURL) {
+            /// <summary>Realiza una petición http asincrona</summary>
+            /// <param name="sURL" type="String">idTransaccion</param>
+            /// <param name="resultFunc" type="Func">Función de resultado, nos van a pasar un objeto response y un objeto deferred.</param>
+            /// <returns type="Deferred"></returns>
+            var xmlhttp;
+            if (window.XMLHttpRequest) {
+                // code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp = new XMLHttpRequest();
+            } else {
+                // code for IE6, IE5
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+
+            var deferred = new Deferred();
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4) {
+                    try {
+                        if (xmlhttp.status != 200)
+                            throw new Error("Http status." + xmlhttp.status);
+
+                        var response = JSON.parse(xmlhttp.responseText);
+                        if (response.result)
+                            deferred.resolve(response);
+                        else
+                            deferred.reject(response.code, response.cause);
+                    }
+                    catch (ex) {
+                        deferred.reject(0, "[makeHttpRequest] {sURL=" + sURL + "}: " + ex.Message);
+                    }
+                }
+            };
+
+            xmlhttp.open("GET", sURL, true);
+            xmlhttp.send();
+
+            return deferred;
+        }
+
+
+    </script>
+
+    <asp:ContentPlaceHolder ID="HeadContent" runat="server" />
+
+    <style type="text/css">
+        .style3
+        {
+            height: 67px;
+            width: 50%;
+        }
+        .style4
+        {
+            height: 68px;
+        }
+        .style5
+        {
+            height: 66px;
+        }
+        .style6
+        {
+            height: 66px;
+            width: 50%;
+        }
+        .style7
+        {
+            height: 68px;
+            width: 50%;
+        }
+    </style>
+
+    </head>
+
+<body bgcolor="#28a745">
+
+<%
+    Dim time As DateTime = DateTime.Now
+    Dim format As String = "\Fec\ha: dd-MM-yyyy - \Hora: HH:mm"
+    Dim sImagen As String = "fas fa-phone"
+    Dim sImagenTitulo As String = "Canal telefonico"
+    
+     
+    %>	
+    <div>
+       <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #ed7203;">
+    <a class="navbar-brand" href="SeleccionarCallBack.aspx" style="background-color: #ed7203;">
+        <img style="width: 80px; position: relative; top: 0px; left: 0px;" src="https://asertis.com.co/wp-content/uploads/2021/03/logo-asertis-blanco.png" alt="Asertis">
+    </a>
+<table style="width: 100%;">
+    <tr>
+        <td style="width: 48%; margin-right=2%"><span style="color: #FFFFFF; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Campaña: <%= EvoAPI.Campaign.Name %></span></td>
+        <td style=""><span style="color: #FFFFFF; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-left:5%;">Transaccion: <%= EvoAPI.Transaction.TransactionId %></span></td>
+    </tr>
+    <tr>
+        <td><span style="color: #FFFFFF; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Agente: <%= EvoAPI.Agent.Name %>&nbsp;<%= EvoAPI.Agent.SecondName %>&nbsp;<%= EvoAPI.Agent.LastName %></span></td>
+        <td><span style="color: #FFFFFF; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-left:5%"><%= time.ToString(format) %></span></td>
+    </tr>
+</table>
+
+  
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  
+    <input id="Buttonpausar0" type="button" value="PAUSAR" onclick="pausar()" class="btn btn-primary" style="font-size: 12px; background-color: #249E6B; width: 25%; height: 40px; background-image: none; font-weight: bold; margin-right: 0; color: #FFFFFF; border: 1px solid transparent; border-radius:4px">&nbsp;&nbsp;&nbsp;&nbsp;
+    <input id="Buttonrecuperar0" type="button" value="RECUPERAR" onclick="recuperar()" class="btn btn-primary" style="font-size: 12px; background-color: #249E6B; width: 25%; height: 40px; background-image: none; font-weight: bold; margin-right: 0; color: #FFFFFF; border: 1px solid transparent; border-radius:4px">
+</nav>
+
+         </div>
+
+         &nbsp;<br/>
+        <div id="divTemporizador" class="container">
+            <div class="clock">
+            <input class="number" type="text" maxlength="2" value="00"><span>Min</span><input class="number" type="text" maxlength="2" value="55"><span>Sec</span>
+            </div>
+        </div>
+
+
+
+
+    <form id="form1" runat="server">
+<div style="margin-left: auto; margin-right: auto;">
+    <table style="width: 80%; max-width: 600px; border-collapse: collapse; margin: 2%  auto; height: 215px;">
+                <tr>
+                <th style="border: 1px solid #249E6B; text-align:center; background-color: #249E6B; font-size: 16px; color: #FFFFFF; font-weight: bold; padding-top: 10px; padding-bottom: 10px;" 
+                    align="center" colspan="2" class="w-50">
+                    Habeas Data</th>
+                <th style="border: 1px solid #249E6B; text-align:center; background-color: #249E6B; font-size: 16px; color: #FFFFFF; font-weight: bold; width: 50%;" 
+                    align="center">
+                    Transferencias
+                </th>
+            </tr>
+
+    <tr>
+         <td style="border: 1px solid #ED7203; font-size: 16px; color: #0c5e16; font-weight: bold; padding: 5px;" 
+             align="center" colspan="2" class="style3">
+    Cedula<br />
+    <asp:TextBox ID="Cedula" runat="server" Font-Bold="True" ForeColor="#0C5E16" 
+                 ontextchanged="Cedula_TextChanged" AutoPostBack="True" 
+                 style="padding: 5px; border: 1px solid rgb(124 161 129 / 90%); background-color: #ffffff; width: 80%; height: 30px;" />
+</td>
+
+
+         <td style="border: 1px solid #ED7203; font-size: 16px; color: #2b8b4b; font-weight: bold; " align="center">                
+                    <input id="Button9" type="button" value="Menu Bgta" onclick="Transf_MenuBgta()" 
+                     style="font-size: 12px; background-color: #249E6B; width: 200px; height: 40px; background-image: none; font-weight: bold; margin-right: 0; color: #FFFFFF; border: 1px solid transparent; border-radius:4px"/></td>
+    </tr>
+    <tr>
+        <td style="border: 1px solid #ED7203; font-size: 16px; color: #FFFFFF; font-weight: bold; padding: 5px;" 
+            align="center" colspan="2" class="style6">                
+            <input id="Button5" type="button" value="Grabar" onclick="Conferencia_v2()" 
+                 
+                style="font-size: 12px; background-color: #249E6B; width: 133px; height: 40px; background-image: none; font-weight: bold; margin-right: 0; color: #FFFFFF; border: 1px solid transparent; border-radius:4px"; 
+                onclick="return Button5_onclick()" />
+             <input id="Button2" type="button" value="Detener" onclick="EnviarMsgDBR()" 
+                
+                style="font-size: 12px; background-color: #249E6B; width: 138px; height: 40px; background-image: none; font-weight: bold; margin-right: 0; color: #FFFFFF; border: 1px solid transparent; border-radius:4px"
+                ;"/>
+        </td>
+       <td style="border: 1px solid #ED7203; font-size: 16px; color: #2b8b4b; font-weight: bold; " 
+            align="center" class="style5">      
+                    <input id="Button8" type="button" value="Area Admin" 
+                        onclick="Transf_AreaAdmin()" 
+                        style="font-size: 12px; background-color: #249E6B; width: 200px; height: 40px; background-image: none; font-weight: bold; margin-right: 0; color: #FFFFFF; border: 1px solid transparent; border-radius:4px"/></td>
+
+    </tr>
+    <tr>
+        <td style="border: 1px solid #ED7203; font-size: 16px; color: #9dc541; font-weight: bold; padding: 5px;" 
+            align="center" colspan="2" class="style7">
+            </td>
+        <td style="border: 1px solid #ED7203; font-size: 16px; color: #2b8b4b; font-weight: bold; " 
+                    align="center" class="style4">                
+                    <input id="Button10" type="button" value="Encuesta" 
+                        onclick="Transf_Encuesta()" 
+                         style="font-size: 12px; background-color: #249E6B; width: 200px; height: 40px; background-image: none; font-weight: bold; margin-right: 0; color: #FFFFFF; border: 1px solid transparent; border-radius:4px"/></td>
+    </tr>
+</table>
+
+
+</div>
+
+    <table style="width:603px; margin-left: auto; margin-right:auto;">
+        <tbody>
+            <tr>
+                <td>
+                <asp:ContentPlaceHolder ID="MainContent" runat="server"></asp:ContentPlaceHolder>
+                </td>
+            </tr>
+            
+        </tbody>
+    </table> 
+<!-- <div class="off-canvas-overlay"></div> -->
+    
+ </form>
+    <div>
+        <asp:ContentPlaceHolder ID="FooterContent" runat="server"></asp:ContentPlaceHolder>
+    </div>
+</body>
+
+<script runat="server">
+    
+    Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        
+        If Not EvoAPI.IsLoaded Then
+            Message.ShowError("Las variables se han perdido por inactividad de la sesion. Puede reiniciar el argumentario pulsando el boton ""Inicio""")
+        End If
+        
+    End Sub
+    
+    Protected Sub Cedula_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs)
+        Gestion.Transaccion.KeyValueCollection.SetValue("Cedula", Cedula.Text)
+    End Sub
+</script>
+
+</html>

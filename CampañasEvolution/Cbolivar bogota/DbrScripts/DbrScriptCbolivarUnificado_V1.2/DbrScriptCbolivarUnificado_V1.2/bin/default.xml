@@ -1,0 +1,1521 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<strategy_script version="1.0" name="Main" >
+
+
+	<block name="main" >
+		<timeconditions label="Horario laboralcali" property="in_service">
+			<timecondition time_start="07:30" time_finish="18:00" week_day_start="1" week_day_finish="5" />
+			<timecondition time_start="08:00" time_finish="16:00" week_day="6" />
+			<timecondition time_start="10:00" time_finish="16:00" week_day="7" />
+		</timeconditions> 
+		<timeconditions label="Horario laboral Bogota" property="in_service2">
+			<timecondition time_start="07:30" time_finish="18:00" week_day_start="1" week_day_finish="5" />
+			<timecondition time_start="08:00" time_finish="16:00" week_day="6" />
+			<timecondition time_start="10:00" time_finish="16:00" week_day="7" />
+		</timeconditions> 
+		<property label="ClienteCuelgaMenuppal" name="interaction.transaction.closereason" value="100" /> 
+		<property name="bucle1" value="0" /> 
+		<property name="bucle2" value="0" /> 
+		<property name="bucle3" value="0" /> 
+		<property name="bucle4" value="0" /> 
+		<play label="AudioPppal" filename="Resources/Audio/NUEVA CORRECCION AUDIO 0.wav" /> 
+		<play_and_get_digits label="MenuPpal" filename="Resources/Audio/AUDIO 2 ACTUALIZADO 281222.wav" received_digits_property="menuppal" max_digits="1" timeout="3" /> 
+		<goto label="goto1" if_condition="${string::contains('12',menuppal)}" block="main" task_label="goto2" /> 
+		<play label="opnovalida1" filename="Resources/Audio/AUDIO 27.wav" /> 
+		<property label="bucle1" name="bucle1" value="${int::parse(bucle1) + 1}" /> 
+		<goto label="goto3" if_condition="${int::parse(bucle1) &lt; 3}" block="main" task_label="MenuPpal" /> 
+		<hangup /> 
+		<break /> 
+		<goto label="goto2" if_condition="${menuppal == ''}" block="main" task_label="opnovalida1" /> 
+		<goto label="goto4" if_condition="${menuppal == '1'}" block="main" task_label="ClienteCuelgaCali" /> 
+		<property label="ClienteCuelgaBogota" name="interaction.transaction.closereason" value="102" /> 
+		<property name="bucle1_2" value="0" /> 
+		<property name="numdocws" value="-" /> 
+		<property name="nombre1ws" value="-" /> 
+		<property name="nombre2ws" value="-" /> 
+		<property name="apellido1ws" value="-" /> 
+		<property name="apellido2ws" value="-" /> 
+		<property name="numtelaws" value="${interaction.from}" /> 
+		<script label="script12" language="C#" mainclass="MainClass" bin_path=".\DLLs_DBRScripts">
+			<references>
+				<include name="System.dll" />
+				<include name="System.Data.dll" />
+				<include name="System.Net.dll" />
+				<include name="System.Net.Http.dll" />
+				<include name="System.Core.dll" />
+				<include name="Newtonsoft.Json.dll" />
+				<include name="Microsoft.CSharp.dll" />
+				<include name="System.Text.dll" />
+				<include name="Newtonsoft.Json.Linq.dll" />
+			</references>
+			<imports>
+				<import namespace="System" />
+				<import namespace="System.IO" />
+				<import namespace="System.Data" />
+				<import namespace="System.Net" />
+				<import namespace="Newtonsoft.Json" />
+				<import namespace="Newtonsoft.Json.Linq" />
+				<import namespace="System.Collections.Generic" />
+				<import namespace="Microsoft.CSharp" />
+				<import namespace="System.Text" />
+			</imports>
+			<code><![CDATA[
+		class MainClass
+		{
+		
+			public static void ScriptMain(IStrategyScript script)
+			{	
+				ServicePointManager.Expect100Continue = true;
+				ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+				var numtelaws = script.Properties["numtelaws"];
+				string postString = JsonConvert.SerializeObject(new
+						{	
+									nrotelefono = numtelaws,
+									strCamposConsulta = "blv_numerodocumento,firstname,middlename,lastname,blv_segundoapellido"
+							
+						});
+					try{
+					//--- Obtene token --//
+					HttpWebRequest wc = WebRequest.Create("https://api.fenalcovalle.com/auth/login") as HttpWebRequest;
+		            wc.Method = "POST";
+		            wc.ContentType = "application/json"; //"; charset=utf-8";
+		            wc.Headers.Add("username", "UsrCBolivarBgta");
+					wc.Headers.Add("password", "*CB0L1b4RB0Gt4-O22.");
+		            HttpWebResponse response = wc.GetResponse() as HttpWebResponse;
+		            StreamReader reader = new StreamReader(response.GetResponseStream());
+					var str = reader.ReadToEnd();
+					var json = JObject.Parse(str);			
+					var token = (string)json["token"];
+					//--- Obtene token --//
+					//--- Obtener Datos Personales---//
+					byte[] datau = UTF8Encoding.UTF8.GetBytes(postString);  			
+		            HttpWebRequest wp = WebRequest.Create("https://api.fenalcovalle.com/webservicefenalco/cbolivarbgta/consultaxcelCbolivarbgta") as HttpWebRequest;
+		            wp.Method = "POST";
+					wp.ContentLength = datau.Length;
+		            wp.ContentType = "application/json"; //"; charset=utf-8";
+					wp.Headers.Add("Authorization", "Bearer "+token);
+					Stream postStream = wp.GetRequestStream();
+					postStream.Write(datau, 0, datau.Length);
+					HttpWebResponse responsep = wp.GetResponse() as HttpWebResponse;
+		            StreamReader readerp = new StreamReader(responsep.GetResponseStream());
+					var strp = readerp.ReadToEnd();
+					var jsonp = JObject.Parse(strp);
+					if(jsonp["value"].ToString() != "[]") {
+					var numdoc = jsonp["value"][0]["blv_numerodocumento"].ToString();
+					var nombre1 = jsonp["value"][0]["firstname"].ToString();
+					var nombre2 = jsonp["value"][0]["middlename"].ToString();
+					var apellido1 = jsonp["value"][0]["lastname"].ToString();
+					var apellido2 = jsonp["value"][0]["blv_segundoapellido"].ToString();
+					script.Properties["numdocws"] = numdoc;
+					script.Properties["nombre1ws"] = nombre1;
+					script.Properties["nombre2ws"] = nombre2;
+					script.Properties["apellido1ws"] = apellido1;
+					script.Properties["apellido2ws"] = apellido2;
+					}else{
+					script.Properties["numdocws"] = "";
+					script.Properties["nombre1ws"] = "";
+					script.Properties["nombre2ws"] = "";
+					script.Properties["apellido1ws"] = "";
+					script.Properties["apellido2ws"] = "";
+					}
+					//--- Obtener Datos Personales---//
+				}
+						
+				catch ( Exception e) {
+					Console.WriteLine("Excepction: {0}", e);
+				}
+			}	
+		}
+		]]></code>
+		</script> 
+		<settransactionvalue key="numdocumento" value="${numdocws}" /> 
+		<settransactionvalue key="primernombre" value="${nombre1ws}" /> 
+		<settransactionvalue key="segundonombre" value="${nombre2ws}" /> 
+		<settransactionvalue key="primerapellido" value="${apellido1ws}" /> 
+		<settransactionvalue key="segundoapellido" value="${apellido2ws}" /> 
+		<settransactionvalue key="numtel" value="${interaction.from}" /> 
+		<play_and_get_digits label="RestoPais" filename="Resources/Audio/OPCION 2 AUDIO 4.wav" received_digits_property="restopais" max_digits="1" timeout="3" /> 
+		<property name="bucle1_2" value="0" /> 
+		<switchcase label="scRestopais" value="${restopais}">
+			<case value="1" block="main" task_label="InfComercial" />
+			<case value="2" block="main" task_label="goto15" />
+			<case value="3" block="main" task_label="goto156" />
+			<case value="4" block="main" task_label="goto14" />
+		</switchcase> 
+		<switchcase label="scRestopais_2" value="${restopais}">
+			<case value="0" block="main" task_label="RestoPais" />
+			<case value="8" block="main" task_label="opculta" />
+		</switchcase> 
+		<play label="opnovalida2_2" filename="Resources/Audio/AUDIO 27.wav" /> 
+		<property label="bucle1_2" name="bucle1_2" value="${int::parse(bucle1_2) + 1}" /> 
+		<goto label="goto1_2" if_condition="${int::parse(bucle1_2) &lt; 3}" block="main" task_label="RestoPais" /> 
+		<hangup /> 
+		<break /> 
+		<play_and_get_digits label="MenuCaliComercial" filename="Resources/Audio/OPCION 1 AUDIO 5.wav" received_digits_property="calicomercial" max_digits="1" timeout="5" /> 
+		<switchcase label="scMenuCaliComercial" value="${calicomercial}">
+			<case value="1" block="main" task_label="goto9" />
+			<case value="2" block="main" task_label="InfoSalaVentas_CYA" />
+			<case value="0" block="main" task_label="MenuCaliComercial" />
+		</switchcase> 
+		<play label="opnovalida3" filename="Resources/Audio/AUDIO 27.wav" /> 
+		<property label="bucle3" name="bucle3" value="${int::parse(bucle3) + 1}" /> 
+		<goto label="goto6" if_condition="${int::parse(bucle3) &lt; 3}" block="main" task_label="MenuCaliComercial" /> 
+		<hangup /> 
+		<break /> 
+		<play_and_get_digits label="InfoSalaVentas_CYA" filename="Resources/Audio/AUDIO 8 05082024.wav" received_digits_property="InfoSalaVentas_CYA" max_digits="1" timeout="5" /> 
+		<switchcase label="scInfoSalaVentas_CYA" value="${InfoSalaVentas_CYA}">
+			<case value="1" block="main" task_label="InfoSalaVentas_Cali" />
+			<case value="2" block="main" task_label="InfoCandelaria" />
+			<case value="3" block="main" task_label="InfoJamundi" />
+			<case value="4" block="main" task_label="InfoArmenia" />
+			<case value="5" block="main" task_label="InfoCerrito" />
+		</switchcase> 
+		<play label="opnovalida4" filename="Resources/Audio/AUDIO 27.wav" /> 
+		<property label="bucle4" name="bucle4" value="${int::parse(bucle4) + 1}" /> 
+		<goto label="goto7" if_condition="${int::parse(bucle4) &lt; 3}" block="main" task_label="InfoSalaVentas_CYA" /> 
+		<hangup /> 
+		<break /> 
+		<play_and_get_digits label="InfoSalaVentas_Cali" filename="Resources/Audio/AUDIO 62.wav" received_digits_property="InfoSalaVentas_Cali" max_digits="1" timeout="5" /> 
+		<property name="bucle5" value="0" /> 
+		<goto label="gInfoSalaVentas_Cali1" if_condition="${string::contains('12',InfoSalaVentas_Cali)}" block="main" task_label="gInfoSalaVentas_Cali3" /> 
+		<play label="opnovalida5" filename="Resources/Audio/AUDIO 27.wav" /> 
+		<property label="bucle5" name="bucle5" value="${int::parse(bucle5) + 1}" /> 
+		<goto label="gInfoSalaVentas_Cali2" if_condition="${int::parse(bucle5) &lt; 3}" block="main" task_label="InfoSalaVentas_Cali" /> 
+		<hangup /> 
+		<break /> 
+		<play_and_get_digits label="InfComercial" filename="Resources/Audio/OPCION 1 AUDIO 4_1.wav" received_digits_property="comercial" max_digits="1" timeout="5" /> 
+		<property name="bucle2_2" value="0" /> 
+		<goto label="goto565" if_condition="${string::contains('012',comercial)}" block="main" task_label="goto25667" /> 
+		<play label="opnovalida3_2" filename="Resources/Audio/AUDIO 27.wav" /> 
+		<property label="bucle2_2" name="bucle2_2" value="${int::parse(bucle2_2) + 1}" /> 
+		<goto label="goto2_26" if_condition="${int::parse(bucle2_2) &lt; 3}" block="main" task_label="InfComercial" /> 
+		<hangup /> 
+		<break /> 
+		<play label="pasoagentedesistimientos" filename="Resources/Audio/AUDIO 20 (paso asesor).wav" /> 
+		<property label="opdesistimientos" name="idCampanya" value="100000432" /> 
+		<property label="PasoDesistimientos" name="interaction.transaction.closereason" value="126" /> 
+		<escape_command label="escape_command69" command="SET VARIABLE &quot;CHANNEL(musicclass)&quot; &quot;icr.DbrScriptCbolivarUnificado_V1.3.RestoPais&quot;" result_refid="escape_refid" /> 
+		<queue idagent="${strategy.idagent}" priority="${strategy.priority}" handicap="${strategy.handicap}" idcampaign="${idCampanya}" /> 
+		<property name="interaction.transaction.closereason" value="10" /> 
+		<give_music class="MohWS" /> 
+		<sleep hours="1" /> 
+		<break /> 
+		<play_and_get_digits label="Yosoycliente1_1" filename="Resources/Audio/AUDIO 61.wav" received_digits_property="yosoyclienteaudio" max_digits="1" timeout="5" /> 
+		<sql statement="insert into __IVR_Transaccional_CbolivarCali_Detalle &#xD;&#xA;(idtransaccion,&#xD;&#xA;Menu)&#xD;&#xA;values &#xD;&#xA;(${interaction.idtransaction},&#xD;&#xA;${yosoyclienteaudio})" cmdtimeout="10" result_refid="Sujeto_refid" /> 
+		<property name="bucle1_1" value="0" /> 
+		<switchcase label="scYosoycliente" value="${yosoyclienteaudio}">
+			<case value="1" block="main" task_label="SolicitudEstadoCuenta" />
+			<case value="2" block="main" task_label="goto99" />
+			<case value="3" block="main" task_label="goto99" />
+			<case value="4" block="main" task_label="goto98" />
+			<case value="0" block="main" task_label="Yosoycliente1_1" />
+		</switchcase> 
+		<play label="opnovalida1_1" filename="Resources/Audio/AUDIO 27.wav" /> 
+		<property label="bucle1_1" name="bucle4_2" value="${int::parse(bucle4_2) + 1}" /> 
+		<goto label="goto1_1" if_condition="${int::parse(bucle1_1) &lt; 3}" block="main" task_label="Yosoycliente1_1" /> 
+		<hangup /> 
+		<break /> 
+		<property label="FinalAdminCali" name="interaction.transaction.closereason" value="111" /> 
+		<transfer_to label="transfer_to1" to="*24900" /> 
+		<break /> 
+		<property label="ClienteCuelgaCali" name="interaction.transaction.closereason" value="101" /> 
+		<play_and_get_digits label="MenuCali" filename="Resources/Audio/OPCION 1 AUDIO 3.wav" received_digits_property="menucali" max_digits="1" timeout="5" /> 
+		<switchcase label="scMenuCali" value="${menucali}">
+			<case value="1" block="main" task_label="MenuCaliComercial" />
+			<case value="2" block="main" task_label="Yosoycliente1_1" />
+			<case value="3" block="main" task_label="FinalAdminCali" />
+			<case value="4" block="main" task_label="goto11" />
+			<case value="0" block="main" task_label="MenuCali" />
+		</switchcase> 
+		<play label="opnovalida2" filename="Resources/Audio/AUDIO 27.wav" /> 
+		<property label="bucle2" name="bucle2" value="${int::parse(bucle2) + 1}" /> 
+		<goto label="goto5" if_condition="${int::parse(bucle2) &lt; 3}" block="main" task_label="MenuCali" /> 
+		<hangup /> 
+		<break /> 
+		<property label="InfoCandelaria" name="interaction.transaction.closereason" value="107" /> 
+		<play label="infoscandelaria" filename="Resources/Audio/AUDIO 10 05082024.wav" /> 
+		<break /> 
+		<property label="InfoJamundi" name="interaction.transaction.closereason" value="108" /> 
+		<play label="infosJamundí" filename="Resources/Audio/AUDIO 11 05082024.wav" /> 
+		<break /> 
+		<property label="InfoArmenia" name="interaction.transaction.closereason" value="109" /> 
+		<play label="infosArmenia" filename="Resources/Audio/AUDIO 12 05082024.wav" /> 
+		<break /> 
+		<property label="InfoCerrito" name="interaction.transaction.closereason" value="163" /> 
+		<play label="infosPalmira" filename="Resources/Audio/AUDIO 17 05082024.wav" /> 
+		<break /> 
+		<property label="InfoVivero" name="interaction.transaction.closereason" value="112" /> 
+		<play label="infosvivero" filename="Resources/Audio/AUDIO 13 05082024.wav" /> 
+		<break /> 
+		<property label="InfoEncanto" name="interaction.transaction.closereason" value="113" /> 
+		<play label="infosencanto" filename="Resources/Audio/AUDIO 14 05082024.wav" /> 
+		<break /> 
+		<property label="InfoValleLili" name="interaction.transaction.closereason" value="114" /> 
+		<play label="infosvallelili" filename="Resources/Audio/AUDIO 15 05082024.wav" /> 
+		<break /> 
+		<property label="InfoMoka" name="interaction.transaction.closereason" value="115" /> 
+		<play label="infosmoka" filename="Resources/Audio/AUDIO 16 05082024.wav" /> 
+		<break /> 
+		<goto label="goto9" if_condition="${not in_service}" block="main" task_label="LlamadaFueraHorarios1" /> 
+		<play_and_get_digits label="numdocrp1_1" filename="Resources/Audio/AUDIO 19 (solicitud doc).wav" received_digits_property="numdoc" max_digits="12" timeout="5" /> 
+		<play label="pasoagente1_1" filename="Resources/Audio/AUDIO 20 (paso asesor).wav" /> 
+		<property label="PasoCaliComercial" name="interaction.transaction.closereason" value="103" /> 
+		<property label="property1_1" name="idCampanya" value="100000357" /> 
+		<call block="query_customer_table" /> 
+		<escape_command label="escape_command1_1" command="SET VARIABLE &quot;CHANNEL(musicclass)&quot; &quot;icr.DbrScriptCbolivarUnificado_V1.3.0.Cali&quot;" result_refid="escape_refid" /> 
+		<queue idagent="${strategy.idagent}" priority="${strategy.priority}" handicap="${strategy.handicap}" idcustomer="${id_sujeto}" idcampaign="${idCampanya}" /> 
+		<property name="interaction.transaction.closereason" value="10" /> 
+		<give_music class="Cali" /> 
+		<sleep hours="1" /> 
+		<break /> 
+		<property label="LlamadaFueraHorarios1" name="interaction.transaction.closereason" value="123" /> 
+		<play label="audiofh1" filename="Resources/Audio/AUDIO 18 (fuera de horario).wav" /> 
+		<break /> 
+		<goto label="goto10" if_condition="${not in_service}" block="main" task_label="LlamadaFueraHorarios2" /> 
+		<break /> 
+		<property label="LlamadaFueraHorarios2" name="interaction.transaction.closereason" value="123" /> 
+		<play label="audiofh2" filename="Resources/Audio/AUDIO 18 (fuera de horario).wav" /> 
+		<break /> 
+		<goto label="goto11" if_condition="${not in_service}" block="main" task_label="LlamadaFueraHorarios3" /> 
+		<play_and_get_digits label="numdocrp3_1" filename="Resources/Audio/AUDIO 19 (solicitud doc).wav" received_digits_property="numdoc" max_digits="12" timeout="5" /> 
+		<play label="pasoagente3_1" filename="Resources/Audio/AUDIO 20 (paso asesor).wav" /> 
+		<property label="PasoCaliOtraInfo_1" name="interaction.transaction.closereason" value="106" /> 
+		<property label="property3_1" name="idCampanya" value="100000360" /> 
+		<call block="query_customer_table" /> 
+		<escape_command label="escape_command3_1" command="SET VARIABLE &quot;CHANNEL(musicclass)&quot; &quot;icr.DbrScriptCbolivarUnificado_V1.3.Cali&quot;" result_refid="escape_refid" /> 
+		<queue idagent="${strategy.idagent}" priority="${strategy.priority}" handicap="${strategy.handicap}" idcustomer="${id_sujeto}" idcampaign="${idCampanya}" /> 
+		<property name="interaction.transaction.closereason" value="10" /> 
+		<give_music class="Cali" /> 
+		<sleep hours="1" /> 
+		<break /> 
+		<property label="LlamadaFueraHorarios3" name="interaction.transaction.closereason" value="123" /> 
+		<play label="audiofh3" filename="Resources/Audio/AUDIO 18 (fuera de horario).wav" /> 
+		<break /> 
+		<goto label="goto14" if_condition="${not in_service2}" block="main" task_label="audiofh5" /> 
+		<play label="audio12" filename="Resources/Audio/A   aaaudio Pagos PBC.wav" /> 
+		<play label="pasoagente3_2" filename="Resources/Audio/AUDIO 20 (paso asesor).wav" /> 
+		<property label="PasoBgtaOtraInformacion" name="interaction.transaction.closereason" value="121" /> 
+		<property label="property3_2" name="idCampanya" value="100000365" /> 
+		<call block="query_customer_table1" /> 
+		<escape_command label="escape_command3_2" command="SET VARIABLE &quot;CHANNEL(musicclass)&quot; &quot;icr.DbrScriptCbolivarUnificado_V1.3.BolivarContigoPagos&quot;" result_refid="escape_refid" /> 
+		<queue idagent="${strategy.idagent}" priority="${strategy.priority}" handicap="${strategy.handicap}" idcustomer="${id_sujeto}" idcampaign="${idCampanya}" /> 
+		<property name="interaction.transaction.closereason" value="10" /> 
+		<give_music class="BolivarContigoPagos" /> 
+		<sleep hours="1" /> 
+		<break /> 
+		<play label="audiofh5" filename="Resources/Audio/AudioCierreBolivar.wav" /> 
+		<property label="LlamadaFueraHorarios5" name="interaction.transaction.closereason" value="123" /> 
+		<break /> 
+		<goto label="goto15" if_condition="${not in_service2}" block="main" task_label="audiofh6" /> 
+		<play_and_get_digits label="SoyCliente" filename="Resources/Audio/AUDIO 6 13062023.wav" received_digits_property="soycliente" max_digits="1" timeout="5" /> 
+		<property name="bucle4_2" value="0" /> 
+		<switchcase label="scSoyCliente" value="${soycliente}">
+			<case value="1" block="main" task_label="audio9" />
+			<case value="2" block="main" task_label="audio10" />
+			<case value="3" block="main" task_label="audio11" />
+			<case value="0" block="main" task_label="SoyCliente" />
+		</switchcase> 
+		<play label="opnovalida4_2" filename="Resources/Audio/AUDIO 27.wav" /> 
+		<property label="bucle4_2" name="bucle4_2" value="${int::parse(bucle4_2) + 1}" /> 
+		<goto label="goto4_2" if_condition="${int::parse(bucle4_2) &lt;3}" block="main" task_label="SoyCliente" /> 
+		<hangup /> 
+		<break /> 
+		<play label="audiofh6" filename="Resources/Audio/AudioCierreBolivar.wav" /> 
+		<property label="LlamadaFueraHorarios6" name="interaction.transaction.closereason" value="123" /> 
+		<break /> 
+		<property label="opculta" name="idCampanya" value="100000274" /> 
+		<property label="PasoOculta" name="interaction.transaction.closereason" value="124" /> 
+		<escape_command label="escape_command6" command="SET VARIABLE &quot;CHANNEL(musicclass)&quot; &quot;icr.DbrScriptCbolivarUnificado_V1.3.RestoPais&quot;" result_refid="escape_refid" /> 
+		<queue idagent="${strategy.idagent}" priority="${strategy.priority}" handicap="${strategy.handicap}" idcampaign="${idCampanya}" /> 
+		<property name="interaction.transaction.closereason" value="10" /> 
+		<give_music class="RestoPais" /> 
+		<sleep hours="1" /> 
+		<break /> 
+		<goto label="gInfoSalaVentas_Cali3" if_condition="${InfoSalaVentas_Cali == ''}" block="main" task_label="opnovalida5" /> 
+		<goto label="gInfoSalaVentas_Cali4" if_condition="${InfoSalaVentas_Cali == '1'}" block="main" task_label="InfoNorte" /> 
+		<play_and_get_digits label="InfoSalaVentas_Cali_Sur" filename="Resources/Audio/AUDIO 9 ACTUALIZADO.wav" received_digits_property="InfoSalaVentas_Cali_Sur" max_digits="1" timeout="5" /> 
+		<property name="bucle5" value="0" /> 
+		<switchcase label="scInfoSalaVentas_Cali_Sur" value="${InfoSalaVentas_Cali_Sur}">
+			<case value="1" block="main" task_label="InfoVivero" />
+			<case value="2" block="main" task_label="InfoEncanto" />
+			<case value="3" block="main" task_label="InfoValleLili" />
+			<case value="4" block="main" task_label="InfoMoka" />
+		</switchcase> 
+		<play filename="Resources/Audio/AUDIO 27.wav" /> 
+		<property name="bucle5" value="${int::parse(bucle5) + 1}" /> 
+		<goto label="gInfoSalaVentas_Cali_Sur1" if_condition="${int::parse(bucle5) &lt; 3}" block="main" task_label="InfoSalaVentas_Cali_Sur" /> 
+		<hangup /> 
+		<break /> 
+		<property label="InfoNorte" name="interaction.transaction.closereason" value="125" /> 
+		<play label="aInfoSalaVentas_Cali_Norte" filename="Resources/Audio/AUDIO 63 05082024.wav" /> 
+		<break /> 
+		<property label="Proyecto_0" name="Proyecto_0" value="-" /> 
+		<property label="Proyecto_1" name="Proyecto_1" value="-" /> 
+		<property label="Proyecto_2" name="Proyecto_2" value="-" /> 
+		<property label="Proyecto_3" name="Proyecto_3" value="-" /> 
+		<property label="Proyecto_4" name="Proyecto_4" value="-" /> 
+		<property label="correo" name="correo" value="-" /> 
+		<property label="wstelefono" name="wstelefono" value="-" /> 
+		<property label="numproyecto" name="numproyecto" value="-" /> 
+		<property label="token" name="token" value="-" /> 
+		<property label="json" name="json" value="-" /> 
+		<property label="cliente" name="cliente" value="-" /> 
+		<property label="url" name="url" value="-" /> 
+		<property name="interaction.transaction.closereason" value="153" /> 
+		<property label="bnumdoc1" name="bnumdoc" value="0" /> 
+		<play_and_get_digits label="NumDoc_Proyectos" filename="Resources/Audio/AUDIO 42.wav" received_digits_property="numdoc" max_digits="12" timeout="5" /> 
+		<play filename="Resources/Audio/tu numero de documento es.wav" /> 
+		<say_digits label="AudioDocumento" digits="${numdoc}" /> 
+		<play_and_get_digits label="ConfirmaDocumento" filename="Resources/Audio/Si es correcto.wav" received_digits_property="cnumdoc" max_digits="1" attempts="2" timeout="3" /> 
+		<goto if_condition="${string::contains('12',cnumdoc)}" block="main" task_label="ve23" /> 
+		<goto block="main" task_label="bnumdoc2" /> 
+		<break /> 
+		<play_tts_and_get_digits label="proyectos1" received_digits_property="proyectos1" max_digits="1" timeout="5">
+			<ssml>
+				<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="es-ES">
+					<p>
+						Para el proyecto ${Proyecto_0} marque 1
+					</p>
+				</speak>
+		
+			</ssml>
+		</play_tts_and_get_digits> 
+		<property label="proyectofinal" name="proyectofinal" value="${Proyecto_0}" /> 
+		<sql statement="update __IVR_Transaccional_CbolivarCali_Detalle &#xD;&#xA;set Proyecto = ${proyectos1},&#xD;&#xA;DesProyecto = '${proyectofinal}' &#xD;&#xA;where idtransaccion = ${interaction.idtransaction}" cmdtimeout="10" result_refid="Sujeto_refid" /> 
+		<goto label="ValProyectos3" if_condition="${yosoyclienteaudio != '1'}" block="main" task_label="property11" /> 
+		<property name="interaction.transaction.closereason" value="154" /> 
+		<property label="ValEstadoCuenta" name="valestadocuenta" value="false" /> 
+		<give_music class="MohWS" /> 
+		<script language="C#" mainclass="MainClass" bin_path=".\DLLs_DBRScripts">
+			<references>
+				<include name="System.dll" />
+				<include name="System.Data.dll" />
+				<include name="System.Net.dll" />
+				<include name="System.Net.Http.dll" />
+				<include name="System.Core.dll" />
+				<include name="Newtonsoft.Json.dll" />
+				<include name="Microsoft.CSharp.dll" />
+				<include name="System.Text.dll" />
+				<include name="Newtonsoft.Json.Linq.dll" />
+			</references>
+			<imports>
+				<import namespace="System" />
+				<import namespace="System.IO" />
+				<import namespace="System.Data" />
+				<import namespace="System.Net" />
+				<import namespace="Newtonsoft.Json" />
+				<import namespace="Newtonsoft.Json.Linq" />
+				<import namespace="System.Collections.Generic" />
+				<import namespace="Microsoft.CSharp" />
+				<import namespace="System.Text" />
+			</imports>
+			<code><![CDATA[
+		class MainClass
+		{
+		
+			public static void ScriptMain(IStrategyScript script)
+			{
+		
+				ServicePointManager.Expect100Continue = true;
+				ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+				var numdoc = script.Properties["numdoc"];
+				var proyectofinal = script.Properties["proyectofinal"];
+				var correo = script.Properties["correo"];
+				var token = script.Properties["token"];
+				string postString = JsonConvert.SerializeObject(new
+						{						
+		
+									documento = numdoc,
+									proyecto = proyectofinal,
+									email = correo,
+									tpenvio= 2
+						});
+				try{
+					//--- Obtener Datos Personales---//
+					script.Log(Level.Trace, "Se enviará el siguiente mensaje al servidor: {0}", postString);
+		            byte[] datau = UTF8Encoding.UTF8.GetBytes(postString);  			
+		            HttpWebRequest wp = WebRequest.Create("https://api.fenalcovalle.com/webservicefenalco/cbolivarbgta/obtenerestadocuentacliente") as HttpWebRequest;
+		            wp.Method = "POST";
+					wp.ContentLength = datau.Length;
+		            wp.ContentType = "application/json"; //"; charset=utf-8";
+					wp.Headers.Add("Authorization", "Bearer "+token);
+					Stream postStream = wp.GetRequestStream();
+					postStream.Write(datau, 0, datau.Length);
+					HttpWebResponse responsep = wp.GetResponse() as HttpWebResponse;
+		            StreamReader readerp = new StreamReader(responsep.GetResponseStream());
+					var strp = readerp.ReadToEnd();
+					var jsonp = JObject.Parse(strp);
+					if(jsonp["client"] != null) {
+						script.Properties["valestadocuenta"] = jsonp["status"].ToString();
+						script.Properties["url"] = jsonp["url"].ToString();
+						script.Properties["cliente"] = jsonp["client"].ToString();
+					}
+		
+				}
+				catch ( Exception e) {
+					Console.WriteLine("Excepction: {0}", e);
+				}
+			}
+		}		
+		]]></code>
+		</script> 
+		<goto label="ValEstadoCuenta1" if_condition="${valestadocuenta != 'True'}" block="main" task_label="property3" /> 
+		<play_and_get_digits label="MetodoEnvio" filename="Resources/Audio/AUDIO 44.wav" received_digits_property="metodoenvio" max_digits="1" timeout="5" /> 
+		<sql statement="update __IVR_Transaccional_CbolivarCali_Detalle &#xD;&#xA;set MetodoEnvio = ${metodoenvio} where idtransaccion = ${interaction.idtransaction}" cmdtimeout="10" result_refid="Sujeto_refid" /> 
+		<property label="estadoenvio1" name="estadoenvio" value="false" /> 
+		<goto label="ValProyectos2" if_condition="${yosoyclienteaudio == '1'}" block="main" task_label="property12" /> 
+		<property name="interaction.transaction.closereason" value="157" /> 
+		<switchcase label="MetodoEnvioCS" value="${metodoenvio}">
+			<case value="1" block="main" task_label="ValCorreo2" />
+			<case value="2" block="main" task_label="ValTelefono2" />
+		</switchcase> 
+		<break /> 
+		<play_tts_and_get_digits label="proyectos2" received_digits_property="proyectos2" max_digits="1">
+			<ssml>
+				<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="es-ES">
+					<p>
+						Para el proyecto ${Proyecto_0} marque 1
+						Para el proyecto ${Proyecto_1} marque 2
+					</p>
+				</speak>
+		
+			</ssml>
+		</play_tts_and_get_digits> 
+		<switchcase label="scproyectos2" value="${proyectos2}">
+			<case value="1" block="main" task_label="p1" />
+			<case value="2" block="main" task_label="p2" />
+		</switchcase> 
+		<break /> 
+		<play_tts_and_get_digits label="proyectos4" received_digits_property="proyectos4" max_digits="1">
+			<ssml>
+				<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="es-ES">
+					<p>
+						Para el proyecto ${Proyecto_0} marque 1
+						Para el proyecto ${Proyecto_1} marque 2
+						Para el proyecto ${Proyecto_2} marque 3
+						Para el proyecto ${Proyecto_3} marque 4
+					</p>
+				</speak>
+		
+			</ssml>
+		</play_tts_and_get_digits> 
+		<switchcase label="scproyectos4" value="${proyectos4}">
+			<case value="1" block="main" task_label="p6" />
+			<case value="2" block="main" task_label="p7" />
+			<case value="3" block="main" task_label="p8" />
+			<case value="4" block="main" task_label="p9" />
+		</switchcase> 
+		<break /> 
+		<play_tts_and_get_digits label="proyectos3" received_digits_property="proyectos3" max_digits="1">
+			<ssml>
+				<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="es-ES">
+					<p>
+						Para el proyecto ${Proyecto_0} marque 1
+						Para el proyecto ${Proyecto_1} marque 2
+						Para el proyecto ${Proyecto_2} marque 3
+					</p>
+				</speak>
+		
+			</ssml>
+		</play_tts_and_get_digits> 
+		<switchcase label="scproyectos3" value="${proyectos3}">
+			<case value="1" block="main" task_label="p3" />
+			<case value="2" block="main" task_label="p4" />
+			<case value="3" block="main" task_label="p5" />
+		</switchcase> 
+		<break /> 
+		<play_tts_and_get_digits label="proyectos5" received_digits_property="proyectos5" max_digits="1">
+			<ssml>
+				<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="es-ES">
+					<p>
+						Para el proyecto ${Proyecto_0} marque 1
+						Para el proyecto ${Proyecto_1} marque 2
+						Para el proyecto ${Proyecto_2} marque 3
+						Para el proyecto ${Proyecto_3} marque 4
+						Para el proyecto ${Proyecto_4} marque 5
+					</p>
+				</speak>
+		
+			</ssml>
+		</play_tts_and_get_digits> 
+		<sql statement="update __IVR_Transaccional_CbolivarCali_Detalle &#xD;&#xA;set Proyecto = ${proyectos5} where idtransaccion = ${interaction.idtransaction}" cmdtimeout="10" result_refid="Sujeto_refid" /> 
+		<switchcase label="scproyectos5" value="${proyectos5}">
+			<case value="1" block="main" task_label="p10" />
+			<case value="2" block="main" task_label="p11" />
+			<case value="3" block="main" task_label="p12" />
+			<case value="4" block="main" task_label="p13" />
+			<case value="5" block="main" task_label="p14" />
+		</switchcase> 
+		<break /> 
+		<goto label="ve2" if_condition="${metodoenvioc == ''}" block="main" task_label="property8" /> 
+		<goto label="ve3" if_condition="${metodoenvioc != '1'}" block="main" task_label="property8" /> 
+		<give_music class="MohWS" /> 
+		<script label="EstadoCuenta1" language="C#" mainclass="MainClass" bin_path=".\DLLs_DBRScripts">
+			<references>
+				<include name="System.dll" />
+				<include name="System.Data.dll" />
+				<include name="System.Net.dll" />
+				<include name="System.Net.Http.dll" />
+				<include name="System.Core.dll" />
+				<include name="Newtonsoft.Json.dll" />
+				<include name="Microsoft.CSharp.dll" />
+				<include name="System.Text.dll" />
+				<include name="Newtonsoft.Json.Linq.dll" />
+			</references>
+			<imports>
+				<import namespace="System" />
+				<import namespace="System.IO" />
+				<import namespace="System.Data" />
+				<import namespace="System.Net" />
+				<import namespace="Newtonsoft.Json" />
+				<import namespace="Newtonsoft.Json.Linq" />
+				<import namespace="System.Collections.Generic" />
+				<import namespace="Microsoft.CSharp" />
+				<import namespace="System.Text" />
+			</imports>
+			<code><![CDATA[
+		class MainClass
+		{
+		
+			public static void ScriptMain(IStrategyScript script)
+			{
+		
+				ServicePointManager.Expect100Continue = true;
+				ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+				var numdoc = script.Properties["numdoc"];
+				var proyectofinal = script.Properties["proyectofinal"];
+				var correo = script.Properties["correo"];
+				var token = script.Properties["token"];
+				string postString = JsonConvert.SerializeObject(new
+						{						
+		
+									documento = numdoc,
+									proyecto = proyectofinal,
+									email = correo,
+									tpenvio= 1
+						});
+				try{
+					//--- Obtener Datos Personales---//
+					script.Log(Level.Trace, "Se enviará el siguiente mensaje al servidor: {0}", postString);
+		            byte[] datau = UTF8Encoding.UTF8.GetBytes(postString);  			
+		            HttpWebRequest wp = WebRequest.Create("https://api.fenalcovalle.com/webservicefenalco/cbolivarbgta/obtenerestadocuentacliente") as HttpWebRequest;
+		            wp.Method = "POST";
+					wp.ContentLength = datau.Length;
+		            wp.ContentType = "application/json"; //"; charset=utf-8";
+					wp.Headers.Add("Authorization", "Bearer "+ token);
+					Stream postStream = wp.GetRequestStream();
+					postStream.Write(datau, 0, datau.Length);
+					HttpWebResponse responsep = wp.GetResponse() as HttpWebResponse;
+		            StreamReader readerp = new StreamReader(responsep.GetResponseStream());
+					var strp = readerp.ReadToEnd();
+					var jsonp = JObject.Parse(strp);
+					if(jsonp["client"] != null) {
+						script.Properties["estadoenvio"] = jsonp["status"].ToString();
+					}
+						
+				}
+				catch ( Exception e) {
+					Console.WriteLine("Excepction: {0}", e);
+				}
+			}
+		}		
+		]]></code>
+		</script> 
+		<goto label="envio1" if_condition="${estadoenvio != 'True'}" block="main" task_label="property7" /> 
+		<property name="interaction.transaction.closereason" value="128" /> 
+		<play label="enviado" filename="Resources/Audio/AUDIO 49.wav" /> 
+		<break /> 
+		<goto label="ValProyectos" if_condition="${yosoyclienteaudio == '1'}" block="main" task_label="SELECCION PROYECTO EC" /> 
+		<property label="SELECCION PROYECTO CS" name="interaction.transaction.closereason" value="152" /> 
+		<play label="Certificado" filename="Resources/Audio/AUDIO 54.wav" /> 
+		<goto block="main" task_label="scNumProyectos" /> 
+		<break /> 
+		<goto label="ValCorreo" if_condition="${correo == ''}" block="main" task_label="property9" /> 
+		<property name="interaction.transaction.closereason" value="159" /> 
+		<play label="infocorreo" filename="Resources/Audio/AUDIO 45.wav" /> 
+		<play_tts label="play_correo">
+			<ssml>
+				<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="es-ES">
+					<p>
+						<prosody rate="slow"> ${correo}</prosody>
+					</p>
+				</speak>
+		
+			</ssml>
+		</play_tts> 
+		<play_and_get_digits label="MetodoEnvioCorreo" filename="Resources/Audio/AUDIO 46.wav" received_digits_property="metodoenvioc" max_digits="1" timeout="5" /> 
+		<sql statement="update __IVR_Transaccional_CbolivarCali_Detalle &#xD;&#xA;set MetodoEnvioCorreo = ${metodoenvioc} where idtransaccion = ${interaction.idtransaction}" cmdtimeout="10" result_refid="Sujeto_refid" /> 
+		<goto label="ve1" if_condition="${string::contains('12',metodoenvioc)}" block="main" task_label="ve2" /> 
+		<property name="interaction.transaction.closereason" value="142" /> 
+		<play filename="Resources/Audio/AUDIO 52.wav" /> 
+		<goto block="main" task_label="play1" /> 
+		<break /> 
+		<goto label="ValTelefono" if_condition="${wstelefono == ''}" block="main" task_label="property10" /> 
+		<property name="interaction.transaction.closereason" value="160" /> 
+		<play label="infotel" filename="Resources/Audio/AUDIO 47.wav" /> 
+		<play_tts label="play_telefono">
+			<ssml>
+				<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="es-ES">
+					<p>
+						<prosody rate="slow">
+						<say-as interpret-as="characters" format="characters">
+						${wstelefono}
+						</say-as>
+						</prosody>
+						
+					</p>
+				</speak>
+		
+			</ssml>
+		</play_tts> 
+		<play_and_get_digits label="MetodoEnvioTelefono" filename="Resources/Audio/AUDIO 48.wav" received_digits_property="metodoenviot" max_digits="1" timeout="5" /> 
+		<sql statement="update __IVR_Transaccional_CbolivarCali_Detalle &#xD;&#xA;set MetodoEnvioTelefono = ${metodoenviot} where idtransaccion = ${interaction.idtransaction}" cmdtimeout="10" result_refid="Sujeto_refid" /> 
+		<goto label="ve4" if_condition="${string::contains('12',metodoenviot)}" block="main" task_label="ve5" /> 
+		<property name="interaction.transaction.closereason" value="145" /> 
+		<play filename="Resources/Audio/AUDIO 52.wav" /> 
+		<goto block="main" task_label="play1" /> 
+		<break /> 
+		<goto label="ve5" if_condition="${metodoenviot == ''}" block="main" task_label="play9" /> 
+		<goto label="ve6" if_condition="${metodoenviot != '1'}" block="main" task_label="play9" /> 
+		<give_music class="MohWS" /> 
+		<script label="EnvioSMS" language="C#" mainclass="MainClass" bin_path=".\DLLs_DBRScripts">
+			<references>
+				<include name="System.dll" />
+				<include name="System.Data.dll" />
+				<include name="System.Net.dll" />
+				<include name="System.Net.Http.dll" />
+				<include name="System.Core.dll" />
+				<include name="Newtonsoft.Json.dll" />
+				<include name="Microsoft.CSharp.dll" />
+				<include name="System.Text.dll" />
+				<include name="Newtonsoft.Json.Linq.dll" />
+			</references>
+			<imports>
+				<import namespace="System" />
+				<import namespace="System.IO" />
+				<import namespace="System.Data" />
+				<import namespace="System.Net" />
+				<import namespace="Newtonsoft.Json" />
+				<import namespace="Newtonsoft.Json.Linq" />
+				<import namespace="System.Collections.Generic" />
+				<import namespace="Microsoft.CSharp" />
+				<import namespace="System.Text" />
+			</imports>
+			<code><![CDATA[
+		class MainClass
+		{
+		
+			public static void ScriptMain(IStrategyScript script)
+			{
+		
+				ServicePointManager.Expect100Continue = true;
+				ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+				var telefono = script.Properties["wstelefono"];
+				var cliente = script.Properties["cliente"];
+				var url = script.Properties["url"];
+				string postString = JsonConvert.SerializeObject(new
+				{	
+		
+					messages = new
+					{				
+						    from = "InfoSMS",
+							destinations = new {
+								
+								to = "57" + telefono,
+								//to = "57"+"3202803008",//"573017717371", //"573104956716", 
+							},
+							text =  "Hola "+ cliente +", \ncomo lo solicitaste te compartimos tu estado de cuenta a través del siguiente enlace "+ url +". Recuerda que también puedes descargarlo desde nuestro portal bolivarcontigocb.com"
+					}
+				});
+				
+				try{
+					byte[] data = UTF8Encoding.UTF8.GetBytes(postString);  
+					HttpWebRequest wc = WebRequest.Create("https://api.infobip.com/sms/2/text/advanced") as HttpWebRequest;
+		            wc.Method = "POST";
+		            wc.ContentType = "application/json"; //"; charset=utf-8";
+		            wc.Headers.Add("Authorization", "Basic Qy5CT0xJVkFSOkZlbmFsY28yMDIw=");
+					Stream postStream = wc.GetRequestStream();
+					postStream.Write(data, 0, data.Length);
+		            HttpWebResponse response = wc.GetResponse() as HttpWebResponse;
+		            StreamReader reader = new StreamReader(response.GetResponseStream());
+					var str = reader.ReadToEnd();
+					var json = JObject.Parse(str);			
+					Console.WriteLine("Resp: {0}", json);
+		            
+				}		
+				catch ( Exception e) {
+					Console.WriteLine("Excepction: {0}", e);
+				}
+			}
+		}		
+		]]></code>
+		</script> 
+		<property name="interaction.transaction.closereason" value="130" /> 
+		<play label="enviado2" filename="Resources/Audio/AUDIO 49.wav" /> 
+		<break /> 
+		<property label="p1" name="proyectofinal" value="${Proyecto_0}" /> 
+		<sql label="sql1" statement="update __IVR_Transaccional_CbolivarCali_Detalle &#xD;&#xA;set Proyecto = ${proyectos2},&#xD;&#xA;DesProyecto = '${proyectofinal}' &#xD;&#xA;where idtransaccion = ${interaction.idtransaction}" cmdtimeout="10" result_refid="Sujeto_refid" /> 
+		<goto block="main" task_label="ValProyectos3" /> 
+		<break /> 
+		<property label="p2" name="proyectofinal" value="${Proyecto_1}" /> 
+		<goto block="main" task_label="sql1" /> 
+		<break /> 
+		<property label="p3" name="proyectofinal" value="${Proyecto_0}" /> 
+		<sql label="sql2" statement="update __IVR_Transaccional_CbolivarCali_Detalle &#xD;&#xA;set Proyecto = ${proyectos3},&#xD;&#xA;DesProyecto = '${proyectofinal}' &#xD;&#xA;where idtransaccion = ${interaction.idtransaction}" cmdtimeout="10" result_refid="Sujeto_refid" /> 
+		<goto block="main" task_label="ValProyectos3" /> 
+		<break /> 
+		<property label="p4" name="proyectofinal" value="${Proyecto_1}" /> 
+		<goto block="main" task_label="sql2" /> 
+		<break /> 
+		<property label="p5" name="proyectofinal" value="${Proyecto_2}" /> 
+		<goto block="main" task_label="sql2" /> 
+		<break /> 
+		<property label="p6" name="proyectofinal" value="${Proyecto_0}" /> 
+		<sql label="sql3" statement="update __IVR_Transaccional_CbolivarCali_Detalle &#xD;&#xA;set Proyecto = ${proyectos4},&#xD;&#xA;DesProyecto = '${proyectofinal}' &#xD;&#xA;where idtransaccion = ${interaction.idtransaction}" cmdtimeout="10" result_refid="Sujeto_refid" /> 
+		<goto block="main" task_label="ValProyectos3" /> 
+		<break /> 
+		<property label="p7" name="proyectofinal" value="${Proyecto_1}" /> 
+		<goto block="main" task_label="sql3" /> 
+		<break /> 
+		<property label="p8" name="proyectofinal" value="${Proyecto_2}" /> 
+		<goto block="main" task_label="sql3" /> 
+		<break /> 
+		<property label="p9" name="proyectofinal" value="${Proyecto_3}" /> 
+		<goto block="main" task_label="sql3" /> 
+		<break /> 
+		<property label="p10" name="proyectofinal" value="${Proyecto_0}" /> 
+		<sql label="sql4" statement="update __IVR_Transaccional_CbolivarCali_Detalle &#xD;&#xA;set Proyecto = ${proyectos5},&#xD;&#xA;DesProyecto = '${proyectofinal}' &#xD;&#xA;where idtransaccion = ${interaction.idtransaction}" cmdtimeout="10" result_refid="Sujeto_refid" /> 
+		<goto block="main" task_label="ValProyectos3" /> 
+		<break /> 
+		<property label="p11" name="proyectofinal" value="${Proyecto_1}" /> 
+		<goto block="main" task_label="sql4" /> 
+		<break /> 
+		<property label="p12" name="proyectofinal" value="${Proyecto_2}" /> 
+		<goto block="main" task_label="sql4" /> 
+		<break /> 
+		<property label="p13" name="proyectofinal" value="${Proyecto_3}" /> 
+		<goto block="main" task_label="sql4" /> 
+		<break /> 
+		<property label="p14" name="proyectofinal" value="${Proyecto_4}" /> 
+		<goto block="main" task_label="sql4" /> 
+		<break /> 
+		<goto label="ValCorreo2" if_condition="${correo == ''}" block="main" task_label="play10" /> 
+		<property name="interaction.transaction.closereason" value="161" /> 
+		<play label="infocorreo2" filename="Resources/Audio/AUDIO 56.wav" /> 
+		<play_tts label="play_correo2">
+			<ssml>
+				<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="es-ES">
+					<p>
+						<prosody rate="slow"> ${correo}</prosody>
+					</p>
+				</speak>
+		
+			</ssml>
+		</play_tts> 
+		<play_and_get_digits label="MetodoEnvioCorreo2" filename="Resources/Audio/AUDIO 46.wav" received_digits_property="metodoenvioc" max_digits="1" timeout="5" /> 
+		<sql statement="update __IVR_Transaccional_CbolivarCali_Detalle &#xD;&#xA;set MetodoEnvioCorreo = ${metodoenvioc} where idtransaccion = ${interaction.idtransaction}" cmdtimeout="10" result_refid="Sujeto_refid" /> 
+		<goto label="ve12" if_condition="${string::contains('12',metodoenvioc)}" block="main" task_label="ve22" /> 
+		<play filename="Resources/Audio/AUDIO 52.wav" /> 
+		<property name="interaction.transaction.closereason" value="142" /> 
+		<goto block="main" task_label="play1" /> 
+		<break /> 
+		<goto label="ve22" if_condition="${metodoenvioc == ''}" block="main" task_label="play11" /> 
+		<goto label="ve32" if_condition="${metodoenvioc != '1'}" block="main" task_label="play11" /> 
+		<give_music class="MohWS" /> 
+		<script label="CertificadoSubsidio1" language="C#" mainclass="MainClass" bin_path=".\DLLs_DBRScripts">
+			<references>
+				<include name="System.dll" />
+				<include name="System.Data.dll" />
+				<include name="System.Net.dll" />
+				<include name="System.Net.Http.dll" />
+				<include name="System.Core.dll" />
+				<include name="Newtonsoft.Json.dll" />
+				<include name="Microsoft.CSharp.dll" />
+				<include name="System.Text.dll" />
+				<include name="Newtonsoft.Json.Linq.dll" />
+			</references>
+			<imports>
+				<import namespace="System" />
+				<import namespace="System.IO" />
+				<import namespace="System.Data" />
+				<import namespace="System.Net" />
+				<import namespace="Newtonsoft.Json" />
+				<import namespace="Newtonsoft.Json.Linq" />
+				<import namespace="System.Collections.Generic" />
+				<import namespace="Microsoft.CSharp" />
+				<import namespace="System.Text" />
+			</imports>
+			<code><![CDATA[
+		class MainClass
+		{
+		
+			public static void ScriptMain(IStrategyScript script)
+			{
+		
+				ServicePointManager.Expect100Continue = true;
+				ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+				var numdoc = script.Properties["numdoc"];
+				var proyectofinal = script.Properties["proyectofinal"];
+				var correo = script.Properties["correo"];
+				var token = script.Properties["token"];
+				var cajacompensacion = "";
+				int ncaja = 0;
+				Int32.TryParse(script.Properties["cajacompensacion"], out ncaja);
+				switch (ncaja) 
+					{
+					  	case 1:
+					    cajacompensacion = "Comfandi";
+					    break;
+					  	case 2:
+					 	cajacompensacion = "Comfenalco";
+					    break;
+					  	case 3:
+					    cajacompensacion = "Compensar";
+					    break;
+					}
+				
+				string postString = JsonConvert.SerializeObject(new
+						{						
+		
+									documento = numdoc,
+									proyecto = proyectofinal,
+									email = correo,
+									tpenvio= 1,
+									caja = cajacompensacion
+						});
+				try{
+					//--- Obtener Datos Personales---//
+					script.Log(Level.Trace, "Se enviará el siguiente mensaje al servidor: {0}", postString);
+		            byte[] datau = UTF8Encoding.UTF8.GetBytes(postString);  			
+		            HttpWebRequest wp = WebRequest.Create("https://api.fenalcovalle.com/webservicefenalco/cbolivarbgta/obtenercertificadosubsidiocliente") as HttpWebRequest;
+		            wp.Method = "POST";
+					wp.ContentLength = datau.Length;
+		            wp.ContentType = "application/json"; //"; charset=utf-8";
+					wp.Headers.Add("Authorization", "Bearer "+token);
+					Stream postStream = wp.GetRequestStream();
+					postStream.Write(datau, 0, datau.Length);
+					HttpWebResponse responsep = wp.GetResponse() as HttpWebResponse;
+		            StreamReader readerp = new StreamReader(responsep.GetResponseStream());
+					var strp = readerp.ReadToEnd();
+					var jsonp = JObject.Parse(strp);
+					if(jsonp["client"] != null) {
+						script.Properties["estadoenvio"] = jsonp["status"].ToString();
+					}
+					
+				}
+				catch ( Exception e) {
+					Console.WriteLine("Excepction: {0}", e);
+				}
+			}
+		}		
+		]]></code>
+		</script> 
+		<goto label="envio2" if_condition="${estadoenvio != 'True'}" block="main" task_label="play12" /> 
+		<property name="interaction.transaction.closereason" value="129" /> 
+		<play label="enviado3" filename="Resources/Audio/AUDIO 57.wav" /> 
+		<break /> 
+		<goto label="ValTelefono2" if_condition="${wstelefono == ''}" block="main" task_label="play13" /> 
+		<property name="interaction.transaction.closereason" value="162" /> 
+		<play label="infotel2" filename="Resources/Audio/AUDIO 58.wav" /> 
+		<play_tts label="play_telefono2">
+			<ssml>
+				<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="es-ES">
+					<p>
+						<prosody rate="slow">
+						<say-as interpret-as="characters" format="characters">
+						${wstelefono}
+						</say-as>
+						</prosody>
+					</p>
+				</speak>
+		
+			</ssml>
+		</play_tts> 
+		<play_and_get_digits label="MetodoEnvioTelefono2" filename="Resources/Audio/AUDIO 48.wav" received_digits_property="metodoenviot" max_digits="1" timeout="5" /> 
+		<sql statement="update __IVR_Transaccional_CbolivarCali_Detalle &#xD;&#xA;set MetodoEnvioTelefono = ${metodoenviot} where idtransaccion = ${interaction.idtransaction}" cmdtimeout="10" result_refid="Sujeto_refid" /> 
+		<goto label="ve42" if_condition="${string::contains('12',metodoenviot)}" block="main" task_label="ve52" /> 
+		<play filename="Resources/Audio/AUDIO 52.wav" /> 
+		<property name="interaction.transaction.closereason" value="145" /> 
+		<goto block="main" task_label="play1" /> 
+		<break /> 
+		<goto label="ve52" if_condition="${metodoenviot == ''}" block="main" task_label="play14" /> 
+		<goto label="ve62" if_condition="${metodoenviot != '1'}" block="main" task_label="play14" /> 
+		<give_music class="MohWS" /> 
+		<script label="CertificadoSubsidio2" language="C#" mainclass="MainClass" bin_path=".\DLLs_DBRScripts">
+			<references>
+				<include name="System.dll" />
+				<include name="System.Data.dll" />
+				<include name="System.Net.dll" />
+				<include name="System.Net.Http.dll" />
+				<include name="System.Core.dll" />
+				<include name="Newtonsoft.Json.dll" />
+				<include name="Microsoft.CSharp.dll" />
+				<include name="System.Text.dll" />
+				<include name="Newtonsoft.Json.Linq.dll" />
+			</references>
+			<imports>
+				<import namespace="System" />
+				<import namespace="System.IO" />
+				<import namespace="System.Data" />
+				<import namespace="System.Net" />
+				<import namespace="Newtonsoft.Json" />
+				<import namespace="Newtonsoft.Json.Linq" />
+				<import namespace="System.Collections.Generic" />
+				<import namespace="Microsoft.CSharp" />
+				<import namespace="System.Text" />
+			</imports>
+			<code><![CDATA[
+		class MainClass
+		{
+		
+			public static void ScriptMain(IStrategyScript script)
+			{
+		
+				ServicePointManager.Expect100Continue = true;
+				ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+				var numdoc = script.Properties["numdoc"];
+				var proyectofinal = script.Properties["proyectofinal"];
+				var correo = script.Properties["correo"];
+				var token = script.Properties["token"];
+				var cajacompensacion = "";
+				int ncaja = 0;
+				Int32.TryParse(script.Properties["cajacompensacion"], out ncaja);
+				switch (ncaja) 
+					{
+					  	case 1:
+					    cajacompensacion = "Comfandi";
+					    break;
+					  	case 2:
+					 	cajacompensacion = "Comfenalco";
+					    break;
+					  	case 3:
+					    cajacompensacion = "Compensar";
+					    break;
+					}
+				string postString = JsonConvert.SerializeObject(new
+						{						
+		
+									documento = numdoc,
+									proyecto = proyectofinal,
+									email = correo,
+									tpenvio= 2,
+									caja = cajacompensacion
+						});
+				try{
+					//--- Obtener Datos Personales---//
+					script.Log(Level.Trace, "Se enviará el siguiente mensaje al servidor: {0}", postString);
+		            byte[] datau = UTF8Encoding.UTF8.GetBytes(postString);  			
+		            HttpWebRequest wp = WebRequest.Create("https://api.fenalcovalle.com/webservicefenalco/cbolivarbgta/obtenercertificadosubsidiocliente") as HttpWebRequest;
+		            wp.Method = "POST";
+					wp.ContentLength = datau.Length;
+		            wp.ContentType = "application/json"; //"; charset=utf-8";
+					wp.Headers.Add("Authorization", "Bearer "+token);
+					Stream postStream = wp.GetRequestStream();
+					postStream.Write(datau, 0, datau.Length);
+					HttpWebResponse responsep = wp.GetResponse() as HttpWebResponse;
+		            StreamReader readerp = new StreamReader(responsep.GetResponseStream());
+					var strp = readerp.ReadToEnd();
+					var jsonp = JObject.Parse(strp);
+					if(jsonp["client"] != null) {
+						script.Properties["estadoenvio"] = jsonp["status"].ToString();
+						script.Properties["url"] = jsonp["url"].ToString();
+						script.Properties["cliente"] = jsonp["client"].ToString();
+					}
+		
+				}
+				catch ( Exception e) {
+					Console.WriteLine("Excepction: {0}", e);
+				}
+			}
+		}		
+		]]></code>
+		</script> 
+		<property name="interaction.transaction.closereason" value="131" /> 
+		<script label="EnvioSMS2" language="C#" mainclass="MainClass" bin_path=".\DLLs_DBRScripts">
+			<references>
+				<include name="System.dll" />
+				<include name="System.Data.dll" />
+				<include name="System.Net.dll" />
+				<include name="System.Net.Http.dll" />
+				<include name="System.Core.dll" />
+				<include name="Newtonsoft.Json.dll" />
+				<include name="Microsoft.CSharp.dll" />
+				<include name="System.Text.dll" />
+				<include name="Newtonsoft.Json.Linq.dll" />
+			</references>
+			<imports>
+				<import namespace="System" />
+				<import namespace="System.IO" />
+				<import namespace="System.Data" />
+				<import namespace="System.Net" />
+				<import namespace="Newtonsoft.Json" />
+				<import namespace="Newtonsoft.Json.Linq" />
+				<import namespace="System.Collections.Generic" />
+				<import namespace="Microsoft.CSharp" />
+				<import namespace="System.Text" />
+			</imports>
+			<code><![CDATA[
+		class MainClass
+		{
+		
+			public static void ScriptMain(IStrategyScript script)
+			{
+		
+				ServicePointManager.Expect100Continue = true;
+				ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+				var telefono = script.Properties["wstelefono"];
+				var cliente = script.Properties["cliente"];
+				var url = script.Properties["url"];		
+				string postString = JsonConvert.SerializeObject(new
+				{	
+		
+					messages = new
+					{				
+						    from = "InfoSMS",
+							destinations = new {
+								to = "57"+telefono,
+								//to = "573202803008",//"573017717371"//"573104956716",
+							},
+							text =  "Hola "+ cliente +", \ncomo lo solicitaste te compartimos tu certificado para el trámite de subsidio a través del siguiente enlace "+ url +". Recuerda que también puedes descargarlo desde nuestro portal bolivarcontigocb.com"
+					}
+				});
+				
+				try{
+					byte[] data = UTF8Encoding.UTF8.GetBytes(postString);  
+					HttpWebRequest wc = WebRequest.Create("https://api.infobip.com/sms/2/text/advanced") as HttpWebRequest;
+		            wc.Method = "POST";
+		            wc.ContentType = "application/json"; //"; charset=utf-8";
+		            wc.Headers.Add("Authorization", "Basic Qy5CT0xJVkFSOkZlbmFsY28yMDIw=");
+					Stream postStream = wc.GetRequestStream();
+					postStream.Write(data, 0, data.Length);
+		            HttpWebResponse response = wc.GetResponse() as HttpWebResponse;
+		            StreamReader reader = new StreamReader(response.GetResponseStream());
+					var str = reader.ReadToEnd();
+					var json = JObject.Parse(str);			
+					Console.WriteLine("Resp: {0}", json);
+		            
+				}		
+				catch ( Exception e) {
+					Console.WriteLine("Excepction: {0}", e);
+				}
+			}
+		}		
+		]]></code>
+		</script> 
+		<play label="enviado4" filename="Resources/Audio/AUDIO 57.wav" /> 
+		<break /> 
+		<play_and_get_digits label="numdocmpp" filename="Resources/Audio/AUDIO 19 (solicitud doc).wav" received_digits_property="numdoc" max_digits="12" timeout="5" /> 
+		<play label="pasoagenteMPP" filename="Resources/Audio/AUDIO 20 (paso asesor).wav" /> 
+		<property label="opMPP" name="idCampanya" value="100000427" /> 
+		<property label="PasoMPP" name="interaction.transaction.closereason" value="127" /> 
+		<call block="BuscarClienteMPP" /> 
+		<goto label="goto1_22" if_condition="${id_sujeto == '0'}" block="main" task_label="PasoBgtaYaSoyCliente_1" /> 
+		<escape_command label="escape_command70" command="SET VARIABLE &quot;CHANNEL(musicclass)&quot; &quot;icr.DbrScriptCbolivarUnificado_V1.3.RestoPais&quot;" result_refid="escape_refid" /> 
+		<queue idagent="${strategy.idagent}" priority="${strategy.priority}" handicap="${strategy.handicap}" idcustomer="${id_sujeto}" idcampaign="${idCampanya}" /> 
+		<property name="interaction.transaction.closereason" value="10" /> 
+		<give_music class="RestoPais" /> 
+		<sleep hours="1" /> 
+		<break /> 
+		<goto label="goto25667" if_condition="${comercial == ''}" block="main" task_label="opnovalida3_2" /> 
+		<goto label="goto4569" if_condition="${comercial == '1'}" block="main" task_label="goto136" /> 
+		<goto label="goto45633" if_condition="${comercial == '0'}" block="main" task_label="InfComercial" /> 
+		<property label="InfoSalaVentasBgta" name="interaction.transaction.closereason" value="117" /> 
+		<play label="PaginaWeb_2" filename="Resources/Audio/OPCION 2 AUDIO 4_2.wav" /> 
+		<hangup /> 
+		<break /> 
+		<goto label="goto136" if_condition="${not in_service2}" block="main" task_label="audiofh4" /> 
+		<play label="pasoagente1_2" filename="Resources/Audio/AUDIO 20 (paso asesor).wav" /> 
+		<property label="PasoBgtaComercial" name="interaction.transaction.closereason" value="116" /> 
+		<property label="property1" name="idCampanya" value="100000362" /> 
+		<call block="query_customer_table1" /> 
+		<escape_command label="escape_command1" command="SET VARIABLE &quot;CHANNEL(musicclass)&quot; &quot;icr.DbrScriptCbolivarUnificado_V1.3.RestoPais&quot;" result_refid="escape_refid" /> 
+		<queue idagent="${strategy.idagent}" priority="${strategy.priority}" handicap="${strategy.handicap}" idcustomer="${id_sujeto}" idcampaign="${idCampanya}" /> 
+		<property name="interaction.transaction.closereason" value="10" /> 
+		<give_music class="RestoPais" /> 
+		<sleep hours="1" /> 
+		<break /> 
+		<play label="audiofh4" filename="Resources/Audio/AudioCierreBolivar.wav" /> 
+		<property label="LlamadaFueraHorarios4" name="interaction.transaction.closereason" value="123" /> 
+		<break /> 
+		<goto label="goto156" if_condition="${not in_service2}" block="main" task_label="audiof7" /> 
+		<property label="FinalAdminBgta" name="interaction.transaction.closereason" value="120" /> 
+		<property label="admin" name="idCampanya" value="100000431" /> 
+		<escape_command label="escape_command63" command="SET VARIABLE &quot;CHANNEL(musicclass)&quot; &quot;icr.DbrScriptCbolivarUnificado_V1.3.RestoPais&quot;" result_refid="escape_refid" /> 
+		<queue idagent="${strategy.idagent}" priority="${strategy.priority}" handicap="${strategy.handicap}" idcampaign="${idCampanya}" /> 
+		<property name="interaction.transaction.closereason" value="10" /> 
+		<sleep hours="1" /> 
+		<break /> 
+		<play label="audiof7" filename="Resources/Audio/AudioCierreBolivar.wav" /> 
+		<property label="LlamadaFueraHorarios7" name="interaction.transaction.closereason" value="123" /> 
+		<break /> 
+		<property label="SolicitudEstadoCuenta" name="interaction.transaction.closereason" value="132" /> 
+		<goto block="main" task_label="Proyecto_0" /> 
+		<break /> 
+		<property label="SolicitudCertificadoSubsidio" name="interaction.transaction.closereason" value="133" /> 
+		<goto block="main" task_label="Proyecto_0" /> 
+		<break /> 
+		<property label="property2" name="interaction.transaction.closereason" value="134" /> 
+		<play label="PasoAgenteValClienteEC" filename="Resources/Audio/AUDIO 50.wav" /> 
+		<goto block="main" task_label="play1" /> 
+		<break /> 
+		<property label="property3" name="interaction.transaction.closereason" value="136" /> 
+		<play label="play2" filename="Resources/Audio/AUDIO 50.wav" /> 
+		<goto block="main" task_label="play1" /> 
+		<break /> 
+		<property label="property4" name="interaction.transaction.closereason" value="137" /> 
+		<play label="play3" filename="Resources/Audio/AUDIO 59.wav" /> 
+		<goto block="main" task_label="play1" /> 
+		<break /> 
+		<property label="property5" name="interaction.transaction.closereason" value="138" /> 
+		<play label="play4" filename="Resources/Audio/AUDIO 60.wav" /> 
+		<goto block="main" task_label="play1" /> 
+		<break /> 
+		<property label="property9" name="interaction.transaction.closereason" value="139" /> 
+		<play label="play5" filename="Resources/Audio/AUDIO 51.wav" /> 
+		<goto block="main" task_label="play1" /> 
+		<break /> 
+		<property label="property8" name="interaction.transaction.closereason" value="140" /> 
+		<play label="play6" filename="Resources/Audio/AUDIO 52.wav" /> 
+		<goto block="main" task_label="play1" /> 
+		<break /> 
+		<property label="property7" name="interaction.transaction.closereason" value="141" /> 
+		<play label="play7" filename="Resources/Audio/AUDIO 50.wav" /> 
+		<goto block="main" task_label="play1" /> 
+		<break /> 
+		<property label="property10" name="interaction.transaction.closereason" value="143" /> 
+		<play label="play8" filename="Resources/Audio/AUDIO 53.wav" /> 
+		<goto block="main" task_label="play1" /> 
+		<break /> 
+		<play label="play9" filename="Resources/Audio/AUDIO 52.wav" /> 
+		<property label="property6" name="interaction.transaction.closereason" value="144" /> 
+		<goto block="main" task_label="play1" /> 
+		<break /> 
+		<play label="play10" filename="Resources/Audio/AUDIO 51.wav" /> 
+		<property name="interaction.transaction.closereason" value="146" /> 
+		<goto block="main" task_label="play1" /> 
+		<break /> 
+		<play label="play11" filename="Resources/Audio/AUDIO 52.wav" /> 
+		<property name="interaction.transaction.closereason" value="147" /> 
+		<goto block="main" task_label="play1" /> 
+		<break /> 
+		<play label="play12" filename="Resources/Audio/AUDIO 59.wav" /> 
+		<property name="interaction.transaction.closereason" value="148" /> 
+		<goto block="main" task_label="play1" /> 
+		<break /> 
+		<play label="play13" filename="Resources/Audio/AUDIO 53.wav" /> 
+		<property name="interaction.transaction.closereason" value="149" /> 
+		<goto block="main" task_label="play1" /> 
+		<break /> 
+		<play label="play14" filename="Resources/Audio/AUDIO 52.wav" /> 
+		<property name="interaction.transaction.closereason" value="150" /> 
+		<goto block="main" task_label="play1" /> 
+		<break /> 
+		<property label="SELECCION PROYECTO EC" name="interaction.transaction.closereason" value="151" /> 
+		<play label="EstadoCuenta" filename="Resources/Audio/AUDIO 43.wav" /> 
+		<switchcase label="scNumProyectos" value="${numproyecto}">
+			<case value="1" block="main" task_label="proyectos1" />
+			<case value="2" block="main" task_label="proyectos2" />
+			<case value="3" block="main" task_label="proyectos3" />
+			<case value="4" block="main" task_label="proyectos4" />
+			<case value="5" block="main" task_label="proyectos5" />
+		</switchcase> 
+		<break /> 
+		<property label="property11" name="interaction.transaction.closereason" value="155" /> 
+		<property label="ValCertificadoSubsidio" name="valcertificadosubsidio" value="false" /> 
+		<give_music class="MohWS" /> 
+		<script language="C#" mainclass="MainClass" bin_path=".\DLLs_DBRScripts">
+			<references>
+				<include name="System.dll" />
+				<include name="System.Data.dll" />
+				<include name="System.Net.dll" />
+				<include name="System.Net.Http.dll" />
+				<include name="System.Core.dll" />
+				<include name="Newtonsoft.Json.dll" />
+				<include name="Microsoft.CSharp.dll" />
+				<include name="System.Text.dll" />
+				<include name="Newtonsoft.Json.Linq.dll" />
+			</references>
+			<imports>
+				<import namespace="System" />
+				<import namespace="System.IO" />
+				<import namespace="System.Data" />
+				<import namespace="System.Net" />
+				<import namespace="Newtonsoft.Json" />
+				<import namespace="Newtonsoft.Json.Linq" />
+				<import namespace="System.Collections.Generic" />
+				<import namespace="Microsoft.CSharp" />
+				<import namespace="System.Text" />
+			</imports>
+			<code><![CDATA[
+		class MainClass
+		{
+		
+			public static void ScriptMain(IStrategyScript script)
+			{
+		
+				ServicePointManager.Expect100Continue = true;
+				ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+				var numdoc = script.Properties["numdoc"];
+				var proyectofinal = script.Properties["proyectofinal"];
+				var correo = script.Properties["correo"];
+				var token = script.Properties["token"];
+				string postString = JsonConvert.SerializeObject(new
+						{						
+		
+									documento = numdoc,
+									proyecto = proyectofinal,
+									email = correo,
+									tpenvio= 2
+						});
+				try{
+					//--- Obtener Datos Personales---//
+					script.Log(Level.Trace, "Se enviará el siguiente mensaje al servidor: {0}", postString);
+		            byte[] datau = UTF8Encoding.UTF8.GetBytes(postString);  			
+		            HttpWebRequest wp = WebRequest.Create("https://api.fenalcovalle.com/webservicefenalco/cbolivarbgta/obtenercertificadosubsidiocliente") as HttpWebRequest;
+		            wp.Method = "POST";
+					wp.ContentLength = datau.Length;
+		            wp.ContentType = "application/json"; //"; charset=utf-8";
+					wp.Headers.Add("Authorization", "Bearer "+token);
+					Stream postStream = wp.GetRequestStream();
+					postStream.Write(datau, 0, datau.Length);
+					HttpWebResponse responsep = wp.GetResponse() as HttpWebResponse;
+		            StreamReader readerp = new StreamReader(responsep.GetResponseStream());
+					var strp = readerp.ReadToEnd();
+					var jsonp = JObject.Parse(strp);
+					if(jsonp["client"] != null) {
+						script.Properties["valcertificadosubsidio"] = jsonp["status"].ToString();
+						script.Properties["url"] = jsonp["url"].ToString();
+						script.Properties["cliente"] = jsonp["client"].ToString();
+						
+					}
+		
+				}
+				catch ( Exception e) {
+					Console.WriteLine("Excepction: {0}", e);
+				}
+			}
+		}		
+		]]></code>
+		</script> 
+		<goto label="ValCertificadoSubsidio1" if_condition="${valcertificadosubsidio != 'True'}" block="main" task_label="property4" /> 
+		<property name="interaction.transaction.closereason" value="158" /> 
+		<play_and_get_digits label="CajaCompensacion" filename="Resources/Audio/AUDIO 55.wav" received_digits_property="cajacompensacion" max_digits="1" timeout="5" /> 
+		<sql statement="update __IVR_Transaccional_CbolivarCali_Detalle &#xD;&#xA;set CajaCompensacion = ${cajacompensacion} where idtransaccion = ${interaction.idtransaction}" cmdtimeout="10" result_refid="Sujeto_refid" /> 
+		<goto label="ValCajaCompensacion" if_condition="${cajacompensacion == '4'}" block="main" task_label="property5" /> 
+		<goto block="main" task_label="MetodoEnvio" /> 
+		<break /> 
+		<property label="property12" name="interaction.transaction.closereason" value="156" /> 
+		<switchcase label="MetodoEnvioEC" value="${metodoenvio}">
+			<case value="1" block="main" task_label="ValCorreo" />
+			<case value="2" block="main" task_label="ValTelefono" />
+		</switchcase> 
+		<break /> 
+		<property label="bnumdoc2" name="bnumdoc" value="${int::parse(bnumdoc) + 1}" /> 
+		<goto if_condition="${int::parse(bnumdoc) &lt; 4}" block="main" task_label="ConfirmaDocumento" /> 
+		<break /> 
+		<goto label="ve23" if_condition="${cnumdoc == ''}" block="main" task_label="bnumdoc2" /> 
+		<goto label="ve33" if_condition="${cnumdoc != '1'}" block="main" task_label="NumDoc_Proyectos" /> 
+		<sql label="sql5" statement="update __IVR_Transaccional_CbolivarCali_Detalle &#xD;&#xA;set NumDoc = ${numdoc} where idtransaccion = ${interaction.idtransaction}" cmdtimeout="10" result_refid="Sujeto_refid" /> 
+		<give_music class="MohWS" /> 
+		<script label="Proyectos" language="C#" mainclass="MainClass" bin_path=".\DLLs_DBRScripts">
+			<references>
+				<include name="System.dll" />
+				<include name="System.Data.dll" />
+				<include name="System.Net.dll" />
+				<include name="System.Net.Http.dll" />
+				<include name="System.Core.dll" />
+				<include name="Newtonsoft.Json.dll" />
+				<include name="Microsoft.CSharp.dll" />
+				<include name="System.Text.dll" />
+				<include name="Newtonsoft.Json.Linq.dll" />
+			</references>
+			<imports>
+				<import namespace="System" />
+				<import namespace="System.IO" />
+				<import namespace="System.Data" />
+				<import namespace="System.Net" />
+				<import namespace="Newtonsoft.Json" />
+				<import namespace="Newtonsoft.Json.Linq" />
+				<import namespace="System.Collections.Generic" />
+				<import namespace="Microsoft.CSharp" />
+				<import namespace="System.Text" />
+				<import namespace="System.Text.RegularExpressions" />
+			</imports>
+			<code><![CDATA[
+		class MainClass
+		{
+		
+			public static void ScriptMain(IStrategyScript script)
+			{
+		
+				ServicePointManager.Expect100Continue = true;
+				ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+				int numdoc = 0;
+				Int32.TryParse(script.Properties["numdoc"], out numdoc);
+				string postString = JsonConvert.SerializeObject(new
+						{						
+		
+									documento = numdoc,
+						});
+				try{
+					//--- Obtene token --//
+					HttpWebRequest wc = WebRequest.Create("https://api.fenalcovalle.com/auth/login") as HttpWebRequest;
+		            wc.Method = "POST";
+		            wc.ContentType = "application/json"; //"; charset=utf-8";
+		            wc.Headers.Add("username", "UsrCBolivarBgta");
+					wc.Headers.Add("password", "*CB0L1b4RB0Gt4-O22.");
+		            HttpWebResponse response = wc.GetResponse() as HttpWebResponse;
+		            StreamReader reader = new StreamReader(response.GetResponseStream());
+					var str = reader.ReadToEnd();
+					var json = JObject.Parse(str);			
+					var token = (string)json["token"];
+					script.Properties["token"] = token;
+					//--- Obtene token --//
+					//--- Obtener Datos Personales---//
+					script.Log(Level.Trace, "Se enviará el siguiente mensaje al servidor: {0}", postString);
+		            byte[] datau = UTF8Encoding.UTF8.GetBytes(postString);  			
+		            HttpWebRequest wp = WebRequest.Create("https://api.fenalcovalle.com/webservicefenalco/cbolivarbgta/consultarproyectosclienteivr") as HttpWebRequest;
+		            wp.Method = "POST";
+					wp.ContentLength = datau.Length;
+		            wp.ContentType = "application/json"; //"; charset=utf-8";
+					wp.Headers.Add("Authorization", "Bearer "+token);
+					Stream postStream = wp.GetRequestStream();
+					postStream.Write(datau, 0, datau.Length);
+					HttpWebResponse responsep = wp.GetResponse() as HttpWebResponse;
+		            StreamReader readerp = new StreamReader(responsep.GetResponseStream());
+					var strp = readerp.ReadToEnd();
+					var jsonp = JObject.Parse(strp);
+					if(jsonp["client"] != null) {
+						script.Properties["correo"] = jsonp["emailaddress"].ToString();
+						var input = jsonp["mobilephone"].ToString() ;
+						string pattern = @"3\d{9}";
+						Match match = Regex.Match(input, pattern);
+						script.Properties["wstelefono"] = match.Value;
+						var tamProyectos = ((JArray)jsonp["record"]).Count;
+						script.Properties["numproyecto"] = tamProyectos.ToString();
+						for (int i = 0; i < tamProyectos; i++) 
+							{						
+							script.Properties["Proyecto_"+i] = jsonp["record"][i]["project"].ToString();
+							}
+					}	
+		
+				}	
+		
+					
+						
+				catch ( Exception e) {
+					Console.WriteLine("Excepction: {0}", e);
+				}
+			}
+		}
+		]]></code>
+		</script> 
+		<goto label="ValCliente" if_condition="${numproyecto != '-'}" block="main" task_label="ValProyectos" /> 
+		<goto label="ValProyectosErrado" if_condition="${yosoyclienteaudio == '1'}" block="main" task_label="property2" /> 
+		<property name="interaction.transaction.closereason" value="135" /> 
+		<play label="PasoAgenteValClienteCS" filename="Resources/Audio/AUDIO 59.wav" /> 
+		<play label="play1" filename="Resources/Audio/AUDIO 20 (paso asesor).wav" /> 
+		<goto label="goto96" if_condition="${not in_service}" block="main" task_label="LlamadaFueraHorarios12" /> 
+		<property name="idCampanya" value="100000358" /> 
+		<call block="query_customer_table" /> 
+		<escape_command command="SET VARIABLE &quot;CHANNEL(musicclass)&quot; &quot;icr.DbrScriptCbolivarUnificado_V1.3.Cali&quot;" result_refid="escape_refid" /> 
+		<queue idagent="${strategy.idagent}" priority="${strategy.priority}" handicap="${strategy.handicap}" idcustomer="${id_sujeto}" idcampaign="${idCampanya}" /> 
+		<property name="interaction.transaction.closereason" value="10" /> 
+		<give_music class="Cali" /> 
+		<sleep hours="1" /> 
+		<break /> 
+		<goto label="goto99" if_condition="${not in_service}" block="main" task_label="LlamadaFueraHorarios63" /> 
+		<play_and_get_digits label="numdocrp5_1" filename="Resources/Audio/AUDIO 19 (solicitud doc).wav" received_digits_property="numdoc" max_digits="12" timeout="5" /> 
+		<play filename="Resources/Audio/AUDIO 20 (paso asesor).wav" /> 
+		<property label="PasoCaliYaSoyClienteNegocio" name="interaction.transaction.closereason" value="104" /> 
+		<property name="idCampanya" value="100000358" /> 
+		<call block="query_customer_table" /> 
+		<escape_command command="SET VARIABLE &quot;CHANNEL(musicclass)&quot; &quot;icr.DbrScriptCbolivarUnificado_V1.3.Cali&quot;" result_refid="escape_refid" /> 
+		<queue idagent="${strategy.idagent}" priority="${strategy.priority}" handicap="${strategy.handicap}" idcustomer="${id_sujeto}" idcampaign="${idCampanya}" /> 
+		<property name="interaction.transaction.closereason" value="10" /> 
+		<give_music class="Cali" /> 
+		<sleep hours="1" /> 
+		<break /> 
+		<property label="LlamadaFueraHorarios63" name="interaction.transaction.closereason" value="123" /> 
+		<play label="audiofh9" filename="Resources/Audio/AUDIO 18 (fuera de horario).wav" /> 
+		<break /> 
+		<goto label="goto98" if_condition="${not in_service}" block="main" task_label="LlamadaFueraHorarios17" /> 
+		<play_and_get_digits label="numdocrp5_2" filename="Resources/Audio/AUDIO 19 (solicitud doc).wav" received_digits_property="numdoc" max_digits="12" timeout="5" /> 
+		<play filename="Resources/Audio/AUDIO 20 (paso asesor).wav" /> 
+		<property label="PasoCaliYaSoyClienteGarantia" name="interaction.transaction.closereason" value="105" /> 
+		<property name="idCampanya" value="100000359" /> 
+		<call block="query_customer_table" /> 
+		<escape_command command="SET VARIABLE &quot;CHANNEL(musicclass)&quot; &quot;icr.DbrScriptCbolivarUnificado_V1.3.Cali&quot;" result_refid="escape_refid" /> 
+		<queue idagent="${strategy.idagent}" priority="${strategy.priority}" handicap="${strategy.handicap}" idcustomer="${id_sujeto}" idcampaign="${idCampanya}" /> 
+		<property name="interaction.transaction.closereason" value="10" /> 
+		<give_music class="Cali" /> 
+		<sleep hours="1" /> 
+		<break /> 
+		<property label="LlamadaFueraHorarios17" name="interaction.transaction.closereason" value="123" /> 
+		<play label="audiofh13" filename="Resources/Audio/AUDIO 18 (fuera de horario).wav" /> 
+		<break /> 
+		<property label="LlamadaFueraHorarios12" name="interaction.transaction.closereason" value="123" /> 
+		<play label="audiofh33" filename="Resources/Audio/AUDIO 18 (fuera de horario).wav" /> 
+		<break /> 
+		<play label="audio9" filename="Resources/Audio/A   aaaudio Pagos PBC.wav" /> 
+		<play label="pasoagente2_1" filename="Resources/Audio/AUDIO 20 (paso asesor).wav" /> 
+		<property label="PasoBgtaEstadoCuenta" name="interaction.transaction.closereason" value="118" /> 
+		<property label="property2_23" name="idCampanya" value="100000492" /> 
+		<call block="query_customer_table1" /> 
+		<escape_command label="escape_command2_23" command="SET VARIABLE &quot;CHANNEL(musicclass)&quot; &quot;icr.DbrScriptCbolivarUnificado_V1.3.BolivarContigoPagos&quot;" result_refid="escape_refid" /> 
+		<queue idagent="${strategy.idagent}" priority="${strategy.priority}" handicap="${strategy.handicap}" idcustomer="${id_sujeto}" idcampaign="${idCampanya}" /> 
+		<property name="interaction.transaction.closereason" value="10" /> 
+		<give_music class="BolivarContigoPagos" /> 
+		<sleep hours="1" /> 
+		<break /> 
+		<play label="audio10" filename="Resources/Audio/A   aaaudio Pagos PBC.wav" /> 
+		<play label="pasoagente2_2" filename="Resources/Audio/AUDIO 20 (paso asesor).wav" /> 
+		<property label="PasoBgtaYaSoyCliente_1" name="interaction.transaction.closereason" value="118" /> 
+		<property label="property2_2" name="idCampanya" value="100000363" /> 
+		<call block="query_customer_table1" /> 
+		<escape_command label="escape_command2_2" command="SET VARIABLE &quot;CHANNEL(musicclass)&quot; &quot;icr.DbrScriptCbolivarUnificado_V1.3.BolivarContigoPagos&quot;" result_refid="escape_refid" /> 
+		<queue idagent="${strategy.idagent}" priority="${strategy.priority}" handicap="${strategy.handicap}" idcustomer="${id_sujeto}" idcampaign="${idCampanya}" /> 
+		<property name="interaction.transaction.closereason" value="10" /> 
+		<give_music class="BolivarContigoPagos" /> 
+		<sleep hours="1" /> 
+		<break /> 
+		<play label="audio11" filename="Resources/Audio/A   aaaudio Pagos PBC.wav" /> 
+		<play label="pasoagente4_3" filename="Resources/Audio/AUDIO 20 (paso asesor).wav" /> 
+		<property label="PasoBgtaYaSoyCliente_2" name="interaction.transaction.closereason" value="119" /> 
+		<property label="property4_2" name="idCampanya" value="100000364" /> 
+		<call block="query_customer_table1" /> 
+		<escape_command label="escape_command4_2" command="SET VARIABLE &quot;CHANNEL(musicclass)&quot; &quot;icr.DbrScriptCbolivarUnificado_V1.3.BolivarContigoPagos&quot;" result_refid="escape_refid" /> 
+		<queue idagent="${strategy.idagent}" priority="${strategy.priority}" handicap="${strategy.handicap}" idcustomer="${id_sujeto}" idcampaign="${idCampanya}" /> 
+		<property name="interaction.transaction.closereason" value="10" /> 
+		<give_music class="BolivarContigoPagos" /> 
+		<sleep hours="1" /> 
+	</block>
+	<block name="query_customer_table1" >
+		<property name="id_sujeto" value="0" /> 
+		<goto if_condition="${numdocws == ''}" block="query_customer_table1" task_label="sql1" /> 
+		<goto if_condition="${numdocws == '-'}" block="query_customer_table1" task_label="sql1" /> 
+		<sql statement="DECLARE @numdoc VARCHAR(13);&#xD;&#xA;DECLARE @idCampanya  NUMERIC(10,0);&#xD;&#xA;DECLARE @temnd VARCHAR(13);&#xD;&#xA;SET @idCampanya= ${idCampanya};&#xD;&#xA;SET @numdoc = ${numdocws}&#xD;&#xA;&#xD;&#xA;SELECT C.idsujeto as idsujeto FROM clientes C JOIN tbidentidadsujetocampanya ISC on C.idsujeto=ISC.idsujeto &#xD;&#xA;       WHERE (ISC.IDCAMPANYA =@idCampanya And c.idsujeto &gt;= 0) AND&#xD;&#xA;                c.IDORIGINAL=@numdoc;" cmdtimeout="10" result_refid="Sujeto_refid" /> 
+		<property if_condition="${ data-table-type::get-row-count( 'Sujeto_refid' )  &gt; 0 }" name="id_sujeto" value="${ data-table-type::get-value( 'Sujeto_refid', 0 ,'idsujeto') }" /> 
+		<echo label="echo1" message="idSujeto for ${interaction.from} is ${id_sujeto}" /> 
+		<break /> 
+		<sql label="sql1" statement="DECLARE @numtel VARCHAR(20);&#xD;&#xA;DECLARE @idCampanya  NUMERIC(10,0);&#xD;&#xA;SET @idCampanya= ${idCampanya}&#xD;&#xA;SET @numtel = ${numtelaws}&#xD;&#xA;&#xD;&#xA;SELECT C.idsujeto as idsujeto FROM clientes C JOIN tbidentidadsujetocampanya ISC on C.idsujeto=ISC.idsujeto &#xD;&#xA;       WHERE (ISC.IDCAMPANYA =@idCampanya And c.idsujeto &gt;= 0) AND&#xD;&#xA;                c.TELEFONO=@numtel;" cmdtimeout="10" result_refid="Sujeto_refid" /> 
+		<property if_condition="${ data-table-type::get-row-count( 'Sujeto_refid' )  &gt; 0 }" name="id_sujeto" value="${ data-table-type::get-value( 'Sujeto_refid', 0 ,'idsujeto') }" /> 
+		<goto block="query_customer_table1" task_label="echo1" /> 
+	</block>
+	<block name="BuscarClienteMPP" >
+		<property name="id_sujeto" value="0" /> 
+		<goto if_condition="${numdoc == ''}" block="BuscarClienteMPP" task_label="echo1" /> 
+		<sql statement="DECLARE @numdoc VARCHAR(13);&#xD;&#xA;DECLARE @idCampanya  NUMERIC(10,0);&#xD;&#xA;DECLARE @temnd VARCHAR(13);&#xD;&#xA;SET @idCampanya= ${idCampanya}&#xD;&#xA;SET @numdoc = ${numdoc}&#xD;&#xA;SET @temnd = (SELECT CASE WHEN @numdoc = '' THEN '0' ELSE @numdoc END AS newnumdoc)&#xD;&#xA;&#xD;&#xA;SELECT C.idsujeto as idsujeto FROM clientes C JOIN tbidentidadsujetocampanya ISC on C.idsujeto=ISC.idsujeto &#xD;&#xA;       WHERE (ISC.IDCAMPANYA =@idCampanya And c.idsujeto &gt;= 0) AND&#xD;&#xA;                c.IDORIGINAL=@temnd;" cmdtimeout="10" result_refid="Sujeto_refid" /> 
+		<property if_condition="${ data-table-type::get-row-count( 'Sujeto_refid' )  &gt; 0 }" name="id_sujeto" value="${ data-table-type::get-value( 'Sujeto_refid', 0 ,'idsujeto') }" /> 
+		<echo label="echo1" message="idSujeto for ${interaction.from} is ${id_sujeto}" /> 
+	</block>
+	<block name="query_customer_table" >
+		<sql label="InsertNumdoc" statement="insert into __CedulasCbolivarBgta (idtransaccion, numdoc,numtel) values (${interaction.idtransaction},'${numdoc}','${interaction.from}')" /> 
+		<property name="id_sujeto" value="0" /> 
+		<goto if_condition="${numdoc == ''}" block="query_customer_table" task_label="echo1" /> 
+		<sql statement="DECLARE @numdoc VARCHAR(13);&#xD;&#xA;DECLARE @idCampanya  NUMERIC(10,0);&#xD;&#xA;DECLARE @temnd VARCHAR(13);&#xD;&#xA;SET @idCampanya= ${idCampanya}&#xD;&#xA;SET @numdoc = ${numdoc}&#xD;&#xA;SET @temnd = (SELECT CASE WHEN @numdoc = '' THEN '0' ELSE @numdoc END AS newnumdoc)&#xD;&#xA;&#xD;&#xA;SELECT C.idsujeto as idsujeto FROM clientes C JOIN tbidentidadsujetocampanya ISC on C.idsujeto=ISC.idsujeto &#xD;&#xA;       WHERE (ISC.IDCAMPANYA =@idCampanya And c.idsujeto &gt;= 0) AND&#xD;&#xA;                c.IDORIGINAL=@temnd;" cmdtimeout="10" result_refid="Sujeto_refid" /> 
+		<property if_condition="${ data-table-type::get-row-count( 'Sujeto_refid' )  &gt; 0 }" name="id_sujeto" value="${ data-table-type::get-value( 'Sujeto_refid', 0 ,'idsujeto') }" /> 
+		<echo label="echo1" message="idSujeto for ${interaction.from} is ${id_sujeto}" /> 
+	</block>
+
+</strategy_script>

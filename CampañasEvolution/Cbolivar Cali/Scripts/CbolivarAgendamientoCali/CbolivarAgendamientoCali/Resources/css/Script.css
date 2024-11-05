@@ -1,0 +1,434 @@
+/* CSS Document */
+html{color:#000;}
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,fieldset,legend,input,textarea,p,blockquote,th,td{margin:0px;padding:0px;}
+table{border-collapse:collapse;border-spacing:0;}
+fieldset,img{border:0;}
+address,caption,cite,code,dfn,em,strong,th,var{font-style:normal;font-weight:normal;}
+li{list-style:none;}
+caption,th{text-align:left;}
+h1,h2,h3,h4,h5,h6 {color: #ec7203;}
+q:before,q:after{content:'';}
+abbr,acronym{border:0;font-variant:normal;}
+sup{vertical-align:text-top;}sub{vertical-align:text-bottom;}
+input,textarea,select{font-family: Roboto,sans-serif;font-size:inherit;font-weight:inherit;}
+legend{color:#000;}del,ins{text-decoration:none;}
+
+
+body {
+    
+    font-size: 11px;
+  
+  /* Importante - Para la correcta visualizacion del HTML en modo diseño en line-height tiene que estar establecido a normal, si no se establece
+bootstrap lo sobre escribe con un valor de anula la visualizacion en developer */
+     line-height: normal;
+}
+
+a {
+    text-decoration: underline;
+    color: #0A7AA2;
+    font-weight: bold;
+    cursor: pointer;
+}
+a:hover {
+    text-decoration: none;    
+}
+
+
+form{
+    margin:2px;
+    padding:2px;
+}
+form input,
+form textarea,
+form select {
+    border:1px solid #e5e6e7;
+    color:#F66D02;
+    padding:2px;
+}
+
+form input:focus,
+form input:active {
+  background: #ffe7bb;
+}
+form input[type="radio"], input[type="checkbox"], input[type="image"] {
+	border: 0px;
+}
+form input[type="submit"]{
+background-color: lightslategrey;
+    border-color: lightslategrey;
+    color: #FFFFFF;
+    border-radius: 3px;
+    display: inline-block;
+    padding: 2px 5px;
+    margin-bottom: 0;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+form input[type="button"]{
+    background-color: transparent;
+    border-color: transparent;
+    color: White;
+    background-image: url('../Images/search.png');
+    background-repeat: no-repeat;
+    background-size: 100%;
+    display: inline-block;
+    margin-bottom: 0;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: normal;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+
+}
+form input[type="submit"]:hover,
+form input[type="button"]:hover{
+    
+}
+
+
+
+
+tfoot{
+    background: #b1dfec;
+    font-weight: bold;
+    color: #000;
+    height:25px;
+    font-size: 11px; 
+}
+
+
+
+.hidden {
+  display: none;
+}
+.clear {
+  clear: both;
+}
+.left {
+  float: left;
+}
+.right {
+  float: right;
+}
+.nowrap {
+  white-space: nowrap;
+}
+.pointer {
+  cursor: pointer;
+}
+.required {
+  color: #0a7aa2;
+  font-size: 10px;
+}
+
+
+table.formulario th,
+table.listado th  
+{
+    padding: 3px;
+    font-weight: bold;
+    color: #FFFFFF;
+    font-size:16px;
+    background-color:#249E6B ;
+    text-align: center;
+    background-color: #ffffff;
+    border:1px solid #249E6B ;
+}
+
+
+table.formulario{
+    background: white;
+    padding-left: 15px;
+    border-collapse: collapse;
+    margin-left: auto;
+    margin-right: auto;
+    width:70%;
+}
+
+table.formulario tbody tr{  
+  height: 25px;
+}
+table.formulario tbody td
+{
+	
+	font-size: 11px;
+	color: #6A6B6F;
+	text-decoration: none;
+	font-weight: normal;
+	padding:16px;
+    clear: both;
+    text-align: left;
+}
+table.formulario tbody td.label{
+    text-align: right;
+}
+table.formulario .odd {
+    background: #CEE8EE;
+}
+table.formulario .odd2{
+    background: #E4F1F4;
+}
+
+
+
+table.listado {
+    color: #646d8a;
+    margin-left: auto;
+    margin-right: auto;
+}
+table.listado tbody tr {
+  background: #e4f2f5;
+}
+table.listado tbody .selectedRow {
+  background: #ffe7bb;
+  font-weight: bold;
+}
+table.listado table .center {
+  text-align: center;
+}
+table.listado tbody tr:hover {
+  background: #ffe7bb;
+}
+table.listado td {
+  border-collapse: collapse;
+  padding: 5px 5px 5px 5px;
+  border-bottom: 1px solid #fff;
+}
+table.listado .odd {
+  background: #cfe8ed;
+}
+
+
+
+.barra-negra{
+	border: 0;
+	margin:0px;
+    padding:0px;
+	height:25px; 
+	width:100%;
+}
+.barra-negra tr{
+    background: #000000 url('../Images/bg-negro.gif');
+}
+.barra-negra td{
+	
+	font-size: 12px;
+	color: #FFFFFF;
+	text-decoration: none;
+	font-weight: bold;
+}
+.barra-negra a{
+	color: #FFFFFF;
+}
+
+
+.barra-gris {
+	background:#E3E3E3 none repeat scroll 0 0;
+	/*display:block;*/
+	height:25px; 
+	margin-right: auto;
+    margin-left: auto;
+}
+
+
+
+#actions {
+    display: block;
+    height: 30px;
+    background: #e3e3e3;
+    margin: 40px 10px 20px 5px;
+    padding: 3px 0 0 3px;
+}
+#actions  a {
+    display: block;
+    float: left;
+    padding: 0 5px 0px 5px;
+    height: 20px;
+    text-decoration:none;
+}
+#actions span {
+    display: block;
+    height: 20px;
+    padding: 3px 10px 0 5px;
+    color: #fff;
+    float: left;
+    clear: none;
+    cursor: pointer;
+}
+#actions .boton {
+    background:url('../Images/bg-button-left.gif') no-repeat left top;
+}
+#actions .boton span  {
+    background: url('../Images/bg-button-right.gif') no-repeat right top;
+    height: 19px;
+}
+#actions .boton:hover {
+  background:url('../Images/bg-but-left-on.gif') no-repeat left top;
+}
+#actions .boton span:hover  {
+    background: url('../Images/bg-but-right-on.gif') no-repeat right top;
+}
+
+.title {
+    padding: 0 0 10px 0;
+    font-size: 16px;
+    font-weight: bold;
+    color: #ec7203;
+}
+
+table.calendar a 
+{
+    background: none;
+    padding: 0px 0px 0px 0px;
+    text-decoration: none;                       
+}
+
+table.calendar th
+{
+    text-align: center;
+}     
+
+table.calendar tbody td
+{
+    text-align: center;
+    font-weight: bold;
+    color: White;            
+} 
+
+
+table.schedule th
+{
+    text-align: center;
+}     
+
+table.schedule tbody td
+{
+    text-align: center;
+    font-weight: bold;
+    width: 300px !important;
+}
+
+
+.final_radiobuttonlist {
+    display: inline-block;
+    
+}
+
+.final_radiobuttonlist input {
+    margin-right: 5px;
+}
+.final_radiobuttonlist label {
+    vertical-align: top;
+    font-size: 12px;
+    padding-right: 30px;
+}
+
+table.formulario > tbody > tr:first-child > td {
+
+}
+
+table.barra-negra > tbody > tr:first-child > td 
+{
+    padding-left: 10px;
+}
+
+table.transaccion > tbody  > tr:first-child > td { padding-left: 10px }
+table.transaccion > tbody  > tr:last-child > td { padding-right: 10px }
+
+span[id*="Email_Editor"]  > div:last-of-type  
+{
+   height: 35px !important;
+}
+
+
+span[id*="Email_Editor"] input
+{
+    margin-bottom: 5px;
+}
+
+
+input[disabled] 
+{
+    
+   cursor: not-allowed !important;
+   opacity: 0.8; 
+}
+
+input[disabled]:hover 
+{
+    box-shadow:none;
+    
+}
+
+.bg-gris { background-color: #b3b3bd; padding: 5px; }
+
+body > table.barra-gris > tbody > tr > td { padding-left: 5px; padding-right: 5px}
+
+.centrado 
+{
+    
+ 
+  margin: auto;
+  width: 70%;
+  border: 1px solid #CECECE;
+  padding: 10px;
+  text-align: center;
+}
+.column {
+  float: left;
+  width: 50%;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.form-control 
+{
+    box-shadow: none;
+    font-size: 12px;
+    border-radius: 2px;
+    border: 1px solid #e8e8e8;
+    height:25px;
+    padding: 4px 12px;
+}
+.form-group 
+{
+    margin-bottom:0px;
+}
+
+
+#ctl00_MainContent_CallDisposition_RadioButtonList1_ctl00 > tbody > tr > td > label 
+{
+ padding-left:5px;   
+}
+
+@font-face{
+  font-family: Roboto;
+  src: url('../fonts/Roboto-Light.ttf');
+}

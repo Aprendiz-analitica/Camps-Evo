@@ -1,0 +1,454 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<strategyScript xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" dslVersion="1.0.0.0" Id="a3dc6a8c-88a1-470f-8229-6994eede56af" name="Main" xmlns="http://schemas.microsoft.com/dsltools/DBRScriptDesigner">
+  <blocks>
+    <strategyScriptHasBlocks Id="63bbe5b6-9d20-4443-8561-4d81888cb138">
+      <block Id="1979ca83-ab1b-4437-946e-dbbcf0573e13" name="main">
+        <tasks>
+          <containerHasTasks Id="03cc1584-58c2-4481-8588-484949cd0d41">
+            <sqlTask Id="ff54b5b7-fca0-4c06-ab9a-de483b2c5c41" statement="DECLARE @idtransaccion VARCHAR(15) ;&#xD;&#xA;SET @idtransaccion= '${interaction.idtransaction}';&#xD;&#xA;select B.IDORIGINAL AS 'numdoc'&#xD;&#xA;,B.NOMBRE AS 'nombre1'&#xD;&#xA;,B.sNombreCompleto AS 'nombre2' &#xD;&#xA;,B.APELLIDO1 AS 'apellido1'&#xD;&#xA;,B.APELLIDO2 AS 'apellido2'&#xD;&#xA;,B.TELEFONO AS 'telefono'&#xD;&#xA;from TRANSACCION A&#xD;&#xA;INNER JOIN CLIENTES B&#xD;&#xA;on CAST (A.idTransaccionOriginal AS varchar) = B.TEXTO1&#xD;&#xA;where A.idTransaccion = @idtransaccion" cmdtimeout="10" result_refid="datoscliente">
+              <taskPorts>
+                <taskHasTaskPorts Id="b7db6e99-f38f-46f6-bb0a-13d9d2b65540">
+                  <taskPort Id="a77017de-d962-4b89-8505-c0fbf755f489" property="next">
+                    <nextTasks>
+                      <taskPortReferencesNextTasks Id="7af6bf02-7234-4054-9e99-ceb56d666d99">
+                        <gotoTaskMoniker Id="39039ee5-80fa-4d31-9229-6ef8b005a9ae" />
+                      </taskPortReferencesNextTasks>
+                    </nextTasks>
+                  </taskPort>
+                </taskHasTaskPorts>
+              </taskPorts>
+            </sqlTask>
+          </containerHasTasks>
+          <containerHasTasks Id="4c9364f5-575c-4923-9e73-3ac4298f243e">
+            <propertyTask Id="1097b068-f0c1-4f23-94e4-ac41d005687c" value="0" name="id_sujeto">
+              <taskPorts>
+                <taskHasTaskPorts Id="716e0fff-8685-4892-8944-65e8ac29edc6">
+                  <taskPort Id="852653c3-90f2-457d-9e45-321c1e26aa49" property="next">
+                    <nextTasks>
+                      <taskPortReferencesNextTasks Id="d3212697-3bb9-42d3-9300-f8458da920a5">
+                        <propertyTaskMoniker Id="d51e9e2f-3d42-4abe-8ded-1862693b27ae" />
+                      </taskPortReferencesNextTasks>
+                    </nextTasks>
+                  </taskPort>
+                </taskHasTaskPorts>
+              </taskPorts>
+            </propertyTask>
+          </containerHasTasks>
+          <containerHasTasks Id="36d4377f-90ef-42c1-9a88-0b34c98f6d68">
+            <propertyTask Id="8d4e623b-b0cd-43e3-a0e4-7b882d7d6417" if_condition="" label="property1" value="${ data-table-type::get-value( 'datoscliente', 0 ,'numdoc') }" name="numdoc">
+              <taskPorts>
+                <taskHasTaskPorts Id="35d1056d-3f32-42ee-814f-911e294d5e9a">
+                  <taskPort Id="aad0abdd-e688-4931-8760-33f5d4c5ef47" property="next">
+                    <nextTasks>
+                      <taskPortReferencesNextTasks Id="dd39cd27-40ef-4512-9320-051ad311e496">
+                        <propertyTaskMoniker Id="a8d8b7ae-95fa-44ae-a6a7-9781451f2cb1" />
+                      </taskPortReferencesNextTasks>
+                    </nextTasks>
+                  </taskPort>
+                </taskHasTaskPorts>
+              </taskPorts>
+            </propertyTask>
+          </containerHasTasks>
+          <containerHasTasks Id="b0fb1af0-8a63-40ff-ba81-efe8c195e805">
+            <propertyTask Id="a8d8b7ae-95fa-44ae-a6a7-9781451f2cb1" if_condition="" value="${ data-table-type::get-value( 'datoscliente', 0 ,'nombre1') }" name="nombre1">
+              <taskPorts>
+                <taskHasTaskPorts Id="5f3f5533-f0db-434a-9230-c2b8901a8201">
+                  <taskPort Id="85541ea0-3362-4b0b-960b-a9cad52b24be" property="next">
+                    <nextTasks>
+                      <taskPortReferencesNextTasks Id="b97039be-3b7b-4a1b-8cbf-f7fda3dbc91d">
+                        <propertyTaskMoniker Id="a5f6adc5-80df-471e-8bb2-858d23b53ac1" />
+                      </taskPortReferencesNextTasks>
+                    </nextTasks>
+                  </taskPort>
+                </taskHasTaskPorts>
+              </taskPorts>
+            </propertyTask>
+          </containerHasTasks>
+          <containerHasTasks Id="9c52deeb-8bdd-4c5b-9ca5-a85226115756">
+            <propertyTask Id="a5f6adc5-80df-471e-8bb2-858d23b53ac1" if_condition="" value="${ data-table-type::get-value( 'datoscliente', 0 ,'nombre2') }" name="nombre2">
+              <taskPorts>
+                <taskHasTaskPorts Id="e1046295-118d-47c2-9a16-4778004d5951">
+                  <taskPort Id="7bf1f35b-454a-4332-a162-9aa8159e86ec" property="next">
+                    <nextTasks>
+                      <taskPortReferencesNextTasks Id="d2a6a67d-dfeb-43d4-9c6a-a1dfb359f9ac">
+                        <propertyTaskMoniker Id="eaba94b4-9594-4e67-aeaf-40a730226f8d" />
+                      </taskPortReferencesNextTasks>
+                    </nextTasks>
+                  </taskPort>
+                </taskHasTaskPorts>
+              </taskPorts>
+            </propertyTask>
+          </containerHasTasks>
+          <containerHasTasks Id="264110b4-e377-4850-9060-3bb09a7a3d30">
+            <propertyTask Id="eaba94b4-9594-4e67-aeaf-40a730226f8d" if_condition="" value="${ data-table-type::get-value( 'datoscliente', 0 ,'apellido1') }" name="apellido1">
+              <taskPorts>
+                <taskHasTaskPorts Id="c4f04e7c-b6d4-4163-90a6-48d491f703b5">
+                  <taskPort Id="3c575eae-0448-4561-9b97-c058f240e590" property="next">
+                    <nextTasks>
+                      <taskPortReferencesNextTasks Id="ee25b13d-d59c-43b8-b55c-1ef447e80162">
+                        <propertyTaskMoniker Id="44385704-ad9b-4b4c-a5da-26251316006c" />
+                      </taskPortReferencesNextTasks>
+                    </nextTasks>
+                  </taskPort>
+                </taskHasTaskPorts>
+              </taskPorts>
+            </propertyTask>
+          </containerHasTasks>
+          <containerHasTasks Id="bd02761e-8fb4-4684-aefa-c67f62ad832a">
+            <propertyTask Id="44385704-ad9b-4b4c-a5da-26251316006c" if_condition="" value="${ data-table-type::get-value( 'datoscliente', 0 ,'apellido2') }" name="apellido2">
+              <taskPorts>
+                <taskHasTaskPorts Id="d7009b61-1328-4eca-bb27-181c557d4d79">
+                  <taskPort Id="be8aa0ad-d396-4775-8625-fa653bb37ac3" property="next">
+                    <nextTasks>
+                      <taskPortReferencesNextTasks Id="4b9b20a0-f6e0-4166-884d-f4db12494cae">
+                        <propertyTaskMoniker Id="e887c069-af90-419c-a21c-4b6b743f8a36" />
+                      </taskPortReferencesNextTasks>
+                    </nextTasks>
+                  </taskPort>
+                </taskHasTaskPorts>
+              </taskPorts>
+            </propertyTask>
+          </containerHasTasks>
+          <containerHasTasks Id="1d38d94a-e9a3-47d3-9b49-e6f59c98ee0a">
+            <propertyTask Id="e887c069-af90-419c-a21c-4b6b743f8a36" if_condition="" value="${ data-table-type::get-value( 'datoscliente', 0 ,'telefono') }" name="telefono">
+              <taskPorts>
+                <taskHasTaskPorts Id="cfb24c17-9c3d-498c-9d7a-1179023dde7c">
+                  <taskPort Id="2d348685-7344-413a-9c61-4442929017e2" property="next">
+                    <nextTasks>
+                      <taskPortReferencesNextTasks Id="c6f160ef-9452-47c4-aeb6-c42689bc4a0c">
+                        <setTransactionValueTaskMoniker Id="c17587c5-57ab-49aa-8c81-1b50f7689696" />
+                      </taskPortReferencesNextTasks>
+                    </nextTasks>
+                  </taskPort>
+                </taskHasTaskPorts>
+              </taskPorts>
+            </propertyTask>
+          </containerHasTasks>
+          <containerHasTasks Id="97cb981e-489e-4762-89ea-c716a351dce2">
+            <setTransactionValueTask Id="c17587c5-57ab-49aa-8c81-1b50f7689696" label="setnumdoc" key="setnumdoc" value="${numdoc}">
+              <taskPorts>
+                <taskHasTaskPorts Id="898dfdd8-147a-4670-92f4-28a400dc17bf">
+                  <taskPort Id="07ae4abc-a886-4365-928c-2305a538956b" property="next">
+                    <nextTasks>
+                      <taskPortReferencesNextTasks Id="7049486c-01e4-44dd-9069-69ab17b50835">
+                        <setTransactionValueTaskMoniker Id="902b4147-a84d-4b38-b09d-5cbfe3994015" />
+                      </taskPortReferencesNextTasks>
+                    </nextTasks>
+                  </taskPort>
+                </taskHasTaskPorts>
+              </taskPorts>
+            </setTransactionValueTask>
+          </containerHasTasks>
+          <containerHasTasks Id="bdef04b7-74e5-48b5-9edf-e02a52d3e606">
+            <setTransactionValueTask Id="902b4147-a84d-4b38-b09d-5cbfe3994015" label="setnombre1" key="setnombre1" value="${nombre1}">
+              <taskPorts>
+                <taskHasTaskPorts Id="53453b43-f6d1-4024-ab59-76febd77bfeb">
+                  <taskPort Id="da841a93-1284-4b0a-94ff-b784aad0e498" property="next">
+                    <nextTasks>
+                      <taskPortReferencesNextTasks Id="2002129b-4bab-41fa-9760-93889251fae3">
+                        <setTransactionValueTaskMoniker Id="94ec844e-fb0e-46cb-81ea-f6f5b698b94c" />
+                      </taskPortReferencesNextTasks>
+                    </nextTasks>
+                  </taskPort>
+                </taskHasTaskPorts>
+              </taskPorts>
+            </setTransactionValueTask>
+          </containerHasTasks>
+          <containerHasTasks Id="aa63f30b-7d19-497b-a05e-f93e51d8eb5b">
+            <setTransactionValueTask Id="94ec844e-fb0e-46cb-81ea-f6f5b698b94c" label="setnombre2" key="setnombre2" value="${nombre2}">
+              <taskPorts>
+                <taskHasTaskPorts Id="7883b7cf-5bba-4fea-970d-ec933f4d21e4">
+                  <taskPort Id="e4b06d66-e967-4837-b3af-fcaee33ef3e5" property="next">
+                    <nextTasks>
+                      <taskPortReferencesNextTasks Id="818f08e8-dce4-4003-9207-720d7dd4e8da">
+                        <setTransactionValueTaskMoniker Id="eb2e9f44-a5a6-4bcb-b3c6-9369c0cf0463" />
+                      </taskPortReferencesNextTasks>
+                    </nextTasks>
+                  </taskPort>
+                </taskHasTaskPorts>
+              </taskPorts>
+            </setTransactionValueTask>
+          </containerHasTasks>
+          <containerHasTasks Id="681b285d-e26d-4373-8715-013ce12365fb">
+            <setTransactionValueTask Id="7bdc89ba-0af0-415c-8e36-0aab2adb2592" label="settelefono" key="settelefono" value="${telefono}">
+              <taskPorts>
+                <taskHasTaskPorts Id="ef6cd90a-dd7e-4f78-b27f-7ae22ab294e8">
+                  <taskPort Id="6f050227-c443-4c1b-847a-53794e626a03" property="next">
+                    <nextTasks>
+                      <taskPortReferencesNextTasks Id="3b51cce0-1890-4af2-99b5-03c9ce843484">
+                        <setTransactionValueTaskMoniker Id="f6587f44-3ce7-4562-8eba-2606a9c69da7" />
+                      </taskPortReferencesNextTasks>
+                    </nextTasks>
+                  </taskPort>
+                </taskHasTaskPorts>
+              </taskPorts>
+            </setTransactionValueTask>
+          </containerHasTasks>
+          <containerHasTasks Id="e209400f-eb75-4ded-b96d-3b8a000d09ef">
+            <setTransactionValueTask Id="749b9213-5a20-48c6-902e-79530e58d494" label="setapellido2" key="setapellido2" value="${apellido2}">
+              <taskPorts>
+                <taskHasTaskPorts Id="896f1853-6129-4b31-96f2-0d5d60c9ae75">
+                  <taskPort Id="5f34e5f6-7748-434b-9611-0db7d79c5580" property="next">
+                    <nextTasks>
+                      <taskPortReferencesNextTasks Id="39128c56-eaf8-451b-8bee-e16c576495bd">
+                        <setTransactionValueTaskMoniker Id="7bdc89ba-0af0-415c-8e36-0aab2adb2592" />
+                      </taskPortReferencesNextTasks>
+                    </nextTasks>
+                  </taskPort>
+                </taskHasTaskPorts>
+              </taskPorts>
+            </setTransactionValueTask>
+          </containerHasTasks>
+          <containerHasTasks Id="69eb8f47-d574-46c7-b680-45e9b555565d">
+            <setTransactionValueTask Id="eb2e9f44-a5a6-4bcb-b3c6-9369c0cf0463" label="setapellido1" key="setapellido1" value="${apellido1}">
+              <taskPorts>
+                <taskHasTaskPorts Id="dd8555da-d33e-4da4-9919-0b0e43d97b20">
+                  <taskPort Id="02419ee2-8681-4b6e-a3ca-fdf558f75d50" property="next">
+                    <nextTasks>
+                      <taskPortReferencesNextTasks Id="4a71ffea-6d38-4dab-85b3-75c7d7771c02">
+                        <setTransactionValueTaskMoniker Id="749b9213-5a20-48c6-902e-79530e58d494" />
+                      </taskPortReferencesNextTasks>
+                    </nextTasks>
+                  </taskPort>
+                </taskHasTaskPorts>
+              </taskPorts>
+            </setTransactionValueTask>
+          </containerHasTasks>
+          <containerHasTasks Id="ca370d8c-ff7b-449b-947c-0e86c97604ab">
+            <propertyTask Id="d51e9e2f-3d42-4abe-8ded-1862693b27ae" if_condition="" value="-" name="numdoc">
+              <taskPorts>
+                <taskHasTaskPorts Id="286356ae-8c25-4868-a3d1-df66af4585de">
+                  <taskPort Id="9d688172-392d-4f17-bb51-30593e96fc7f" property="next">
+                    <nextTasks>
+                      <taskPortReferencesNextTasks Id="a6354b94-7eb1-424f-bbc4-e77a6e521ba6">
+                        <propertyTaskMoniker Id="251e1228-3efa-4f86-ab5d-0c0214efbcc6" />
+                      </taskPortReferencesNextTasks>
+                    </nextTasks>
+                  </taskPort>
+                </taskHasTaskPorts>
+              </taskPorts>
+            </propertyTask>
+          </containerHasTasks>
+          <containerHasTasks Id="8d55b91b-7428-4bdc-84f6-685859bbfbd3">
+            <propertyTask Id="251e1228-3efa-4f86-ab5d-0c0214efbcc6" if_condition="" value="-" name="nombre1">
+              <taskPorts>
+                <taskHasTaskPorts Id="2cd3b9ff-5d20-4953-bfe8-4403648cf32c">
+                  <taskPort Id="c935c563-b8a6-4529-97fa-1ca031c88421" property="next">
+                    <nextTasks>
+                      <taskPortReferencesNextTasks Id="6c54b73c-2eac-46b0-a7e2-ca09d3d06a22">
+                        <propertyTaskMoniker Id="2cdac057-3dad-4e3c-b316-e4d9925283c1" />
+                      </taskPortReferencesNextTasks>
+                    </nextTasks>
+                  </taskPort>
+                </taskHasTaskPorts>
+              </taskPorts>
+            </propertyTask>
+          </containerHasTasks>
+          <containerHasTasks Id="3f204e52-f16e-4ba1-9d54-f25725928d14">
+            <propertyTask Id="2cdac057-3dad-4e3c-b316-e4d9925283c1" if_condition="" value="-" name="nombre2">
+              <taskPorts>
+                <taskHasTaskPorts Id="97df96e9-8fac-44dd-86de-e04549b741f5">
+                  <taskPort Id="2acc1a2b-2dbb-47e5-8fda-6bffb28ad894" property="next">
+                    <nextTasks>
+                      <taskPortReferencesNextTasks Id="27a922ff-313c-49d5-b64f-68476a86bf16">
+                        <propertyTaskMoniker Id="749af80f-d739-4bbb-8030-6eb70ab89d1e" />
+                      </taskPortReferencesNextTasks>
+                    </nextTasks>
+                  </taskPort>
+                </taskHasTaskPorts>
+              </taskPorts>
+            </propertyTask>
+          </containerHasTasks>
+          <containerHasTasks Id="94cb5016-bd4f-4618-bc20-eb8bb0ad2a30">
+            <propertyTask Id="749af80f-d739-4bbb-8030-6eb70ab89d1e" if_condition="" value="-" name="apellido1">
+              <taskPorts>
+                <taskHasTaskPorts Id="6786eabc-f89f-41a6-acb1-348c5ed4e978">
+                  <taskPort Id="f86cf9c1-2858-4e60-9018-99646d641cac" property="next">
+                    <nextTasks>
+                      <taskPortReferencesNextTasks Id="bbd8b8cb-e6e4-4a2e-9876-ceadf2b7224a">
+                        <propertyTaskMoniker Id="fdb3ba1e-85e0-46ce-b7b6-a564994a3197" />
+                      </taskPortReferencesNextTasks>
+                    </nextTasks>
+                  </taskPort>
+                </taskHasTaskPorts>
+              </taskPorts>
+            </propertyTask>
+          </containerHasTasks>
+          <containerHasTasks Id="86d20b44-0316-454e-8a66-f6fd88637c54">
+            <propertyTask Id="fdb3ba1e-85e0-46ce-b7b6-a564994a3197" if_condition="" value="-" name="apellido2">
+              <taskPorts>
+                <taskHasTaskPorts Id="09587a3a-dc8c-4fae-89fc-0b92b8a4b51a">
+                  <taskPort Id="f8f37462-d6ce-4dd1-9795-29d7e0e866c9" property="next">
+                    <nextTasks>
+                      <taskPortReferencesNextTasks Id="51563605-2b2c-4bc5-96a9-a9134525856e">
+                        <propertyTaskMoniker Id="5e4cb314-628c-444a-b0ba-b7d4c9d529c8" />
+                      </taskPortReferencesNextTasks>
+                    </nextTasks>
+                  </taskPort>
+                </taskHasTaskPorts>
+              </taskPorts>
+            </propertyTask>
+          </containerHasTasks>
+          <containerHasTasks Id="0eba6cc2-334f-4cde-a30a-b6122af87265">
+            <propertyTask Id="5e4cb314-628c-444a-b0ba-b7d4c9d529c8" if_condition="" value="-" name="telefono">
+              <taskPorts>
+                <taskHasTaskPorts Id="5073cc5b-64fd-44b4-ac75-66903525f706">
+                  <taskPort Id="58aad0e3-cc3a-4d19-b632-eaae2e928453" property="next">
+                    <nextTasks>
+                      <taskPortReferencesNextTasks Id="b3a25874-92c9-471b-8075-597e316cb3cf">
+                        <sqlTaskMoniker Id="ff54b5b7-fca0-4c06-ab9a-de483b2c5c41" />
+                      </taskPortReferencesNextTasks>
+                    </nextTasks>
+                  </taskPort>
+                </taskHasTaskPorts>
+              </taskPorts>
+            </propertyTask>
+          </containerHasTasks>
+          <containerHasTasks Id="ba38e7ce-d06e-4264-91cf-1da69853f33a">
+            <gotoTask Id="39039ee5-80fa-4d31-9229-6ef8b005a9ae" if_condition="${ data-table-type::get-row-count( 'datoscliente' )  &lt; 1 }">
+              <taskPorts>
+                <taskHasTaskPorts Id="434cb033-8409-4793-8679-f7810bc90d8b">
+                  <taskPort Id="30ca1bea-74f1-4f9e-8a2c-bea3186d3cd6" property="next">
+                    <nextTasks>
+                      <taskPortReferencesNextTasks Id="ff74eb7f-e485-4b00-9384-031d6ac2c9ce">
+                        <propertyTaskMoniker Id="8d4e623b-b0cd-43e3-a0e4-7b882d7d6417" />
+                      </taskPortReferencesNextTasks>
+                    </nextTasks>
+                  </taskPort>
+                </taskHasTaskPorts>
+                <taskHasTaskPorts Id="e8b1fe6f-98a9-445f-9eb4-e704223da547">
+                  <taskPort Id="e8d5f93b-81a7-4d4a-8bb8-d35e196900aa" property="block / task">
+                    <nextTasks>
+                      <taskPortReferencesNextTasks Id="e66bcfa5-07d7-4b72-b4db-e16756c0630c">
+                        <setTransactionValueTaskMoniker Id="c17587c5-57ab-49aa-8c81-1b50f7689696" />
+                      </taskPortReferencesNextTasks>
+                    </nextTasks>
+                  </taskPort>
+                </taskHasTaskPorts>
+              </taskPorts>
+            </gotoTask>
+          </containerHasTasks>
+          <containerHasTasks Id="9dd64a45-49f6-4843-af6f-6485b9f60189">
+            <propertyTask Id="fb5480b0-400d-49c8-aa16-728e7409abc5" value="100000420" name="idCampanya">
+              <taskPorts>
+                <taskHasTaskPorts Id="1f59f4ed-b51c-46c8-84a8-e8e7bdb04c7a">
+                  <taskPort Id="412e04a1-95c0-4f75-a2e2-c3a7cfa04d87" property="next">
+                    <nextTasks>
+                      <taskPortReferencesNextTasks Id="b890e103-a6ae-4ff9-a430-22122b7f751e">
+                        <escape_CommandTaskMoniker Id="026cc89c-4069-4dc7-96b4-13a28d7b3bb6" />
+                      </taskPortReferencesNextTasks>
+                    </nextTasks>
+                  </taskPort>
+                </taskHasTaskPorts>
+              </taskPorts>
+            </propertyTask>
+          </containerHasTasks>
+          <containerHasTasks Id="d0a860a5-06a6-492d-9830-82728256e76c">
+            <queueTask Id="446cdaed-a4f9-421c-9a61-9eb0ddd10931" idagent="${strategy.idagent}" priority="${strategy.priority}" handicap="${strategy.handicap}" skill_set="" data_record_set="" idcampaign="${idCampanya}">
+              <taskPorts>
+                <taskHasTaskPorts Id="c72e12b9-53df-42c0-8041-5eb8ae901085">
+                  <taskPort Id="073b66b8-93e8-4efe-9b1f-3ed911854899" property="next">
+                    <nextTasks>
+                      <taskPortReferencesNextTasks Id="871ad04b-a780-42a8-b157-a6032b633f09">
+                        <propertyTaskMoniker Id="ed438623-6274-4f5c-8944-33141aa97f36" />
+                      </taskPortReferencesNextTasks>
+                    </nextTasks>
+                  </taskPort>
+                </taskHasTaskPorts>
+                <taskHasTaskPorts Id="88f7681e-dc1d-4889-a6b2-5c6dab0d4b2b">
+                  <taskPort Id="312bfda4-d462-424b-bdd3-b660729fff8c" property="on_queue_closed" />
+                </taskHasTaskPorts>
+                <taskHasTaskPorts Id="c56629df-13aa-4efd-97c2-4500bac0ae1f">
+                  <taskPort Id="85224c4d-7e0f-4b96-b4e3-423c0572d781" property="on_queue_saturated_full" />
+                </taskHasTaskPorts>
+                <taskHasTaskPorts Id="8d31b397-b359-4b3e-86c0-3142f9a7d441">
+                  <taskPort Id="077927e7-2cb5-4680-a715-e582d6c6d367" property="on_queue_saturated_timeout" />
+                </taskHasTaskPorts>
+              </taskPorts>
+            </queueTask>
+          </containerHasTasks>
+          <containerHasTasks Id="f6dda5c6-0117-48c4-a8e9-2cbf15a2b551">
+            <propertyTask Id="ed438623-6274-4f5c-8944-33141aa97f36" value="10" name="interaction.transaction.closereason">
+              <taskPorts>
+                <taskHasTaskPorts Id="485477c5-6500-4cac-a86b-01e2d51bd2a1">
+                  <taskPort Id="63281a6e-d973-497b-87b8-e34cf8acdbf4" property="next">
+                    <nextTasks>
+                      <taskPortReferencesNextTasks Id="68212ca6-bd9b-4373-96f5-d36313edefe8">
+                        <give_MusicTaskMoniker Id="eadd0d21-753c-4deb-8625-16f441605a54" />
+                      </taskPortReferencesNextTasks>
+                    </nextTasks>
+                  </taskPort>
+                </taskHasTaskPorts>
+              </taskPorts>
+            </propertyTask>
+          </containerHasTasks>
+          <containerHasTasks Id="e6ee95f3-d289-47a5-86c1-42c56a9c3004">
+            <give_MusicTask Id="eadd0d21-753c-4deb-8625-16f441605a54">
+              <taskPorts>
+                <taskHasTaskPorts Id="ded9d17e-1fa8-4ffc-8d2d-76a8409988e4">
+                  <taskPort Id="dd850169-1445-41ae-8c68-49463649cd46" property="next">
+                    <nextTasks>
+                      <taskPortReferencesNextTasks Id="12bb64af-62e7-4d04-9cda-30f6bd09ccbf">
+                        <sleepTaskMoniker Id="7d410805-360a-4055-98e2-256aa4d45e6f" />
+                      </taskPortReferencesNextTasks>
+                    </nextTasks>
+                  </taskPort>
+                </taskHasTaskPorts>
+              </taskPorts>
+            </give_MusicTask>
+          </containerHasTasks>
+          <containerHasTasks Id="fda1b1f9-db9f-45c1-a8f7-a1cb5e967496">
+            <sleepTask Id="7d410805-360a-4055-98e2-256aa4d45e6f" hours="1">
+              <taskPorts>
+                <taskHasTaskPorts Id="d7092bab-8814-4d6c-9947-6d127cfeda61">
+                  <taskPort Id="99484812-f3ee-4861-a313-d3d967095ecc" property="next" />
+                </taskHasTaskPorts>
+              </taskPorts>
+            </sleepTask>
+          </containerHasTasks>
+          <containerHasTasks Id="5de85488-3593-44be-b3f1-288fb3557807">
+            <escape_CommandTask Id="026cc89c-4069-4dc7-96b4-13a28d7b3bb6" label="escape_command3" command="SET VARIABLE &quot;CHANNEL(musicclass)&quot; &quot;icr.dbrscriptcbolivarbogota_v1.construbolivarbgta&quot;" result_refid="escape_refid">
+              <taskPorts>
+                <taskHasTaskPorts Id="2de22606-142e-4664-9e19-f2ba4fc91b35">
+                  <taskPort Id="41fd4d58-e90f-419e-aa72-565ce8ce9355" property="next">
+                    <nextTasks>
+                      <taskPortReferencesNextTasks Id="79d9d28c-6a32-466e-91a1-9ba0606d576d">
+                        <queueTaskMoniker Id="446cdaed-a4f9-421c-9a61-9eb0ddd10931" />
+                      </taskPortReferencesNextTasks>
+                    </nextTasks>
+                  </taskPort>
+                </taskHasTaskPorts>
+              </taskPorts>
+            </escape_CommandTask>
+          </containerHasTasks>
+          <containerHasTasks Id="82972e53-55fa-4413-a7e8-7a2c1b106475">
+            <setTransactionValueTask Id="f6587f44-3ce7-4562-8eba-2606a9c69da7" label="sedidtoriginal" key="sedidtoriginal" value="${interaction.idoriginaltransaction}">
+              <taskPorts>
+                <taskHasTaskPorts Id="2b5f38c0-4102-4f9e-996b-fc819dbe16fd">
+                  <taskPort Id="639f06a3-c103-415b-946a-58ecdd413976" property="next">
+                    <nextTasks>
+                      <taskPortReferencesNextTasks Id="c8ed0556-8431-4289-b418-bf123b1e048a">
+                        <propertyTaskMoniker Id="fb5480b0-400d-49c8-aa16-728e7409abc5" />
+                      </taskPortReferencesNextTasks>
+                    </nextTasks>
+                  </taskPort>
+                </taskHasTaskPorts>
+              </taskPorts>
+            </setTransactionValueTask>
+          </containerHasTasks>
+        </tasks>
+        <blockPort>
+          <blockHasBlockPort Id="18287f6e-fd5d-454d-a5fd-acb69d995e82">
+            <blockPort Id="f39da87e-b74b-4e15-b145-cbc122f0817f">
+              <firstTasks>
+                <blockPortReferencesFirstTasks Id="84ae06f6-1553-461b-a590-dcce06c6ebdc">
+                  <propertyTaskMoniker Id="1097b068-f0c1-4f23-94e4-ac41d005687c" />
+                </blockPortReferencesFirstTasks>
+              </firstTasks>
+            </blockPort>
+          </blockHasBlockPort>
+        </blockPort>
+      </block>
+    </strategyScriptHasBlocks>
+  </blocks>
+</strategyScript>

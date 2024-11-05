@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<strategy_script version="1.0" name="Main" >
+
+
+	<block name="main" >
+		<timeconditions label="HorarioAtencion" property="en_servicio">
+			<timecondition time_start="07:00" time_finish="17:00" week_day_start="1" week_day_finish="5" />
+			<timecondition time_start="08:00" time_finish="11:59" week_day="6" />
+		</timeconditions> 
+		<timeconditions label="DiasFestivos" property="es_festivo">
+			<timecondition month_day="1" month="1" />
+			<timecondition month_day="20" month="3" />
+			<timecondition month_day="2" month="4" />
+			<timecondition month_day="6" month="4" />
+			<timecondition month_day="7" month="4" />
+			<timecondition month_day="9" month="4" />
+			<timecondition month_day="1" month="5" />
+			<timecondition month_day="22" month="5" />
+			<timecondition month_day="10" month="6" />
+			<timecondition month_day="20" month="7" />
+			<timecondition month_day="7" month="8" />
+			<timecondition month_day="21" month="8" />
+			<timecondition month_day="16" month="10" />
+			<timecondition month_day="6" month="11" />
+			<timecondition month_day="13" month="11" />
+			<timecondition month_day="8" month="12" />
+			<timecondition month_day="25" month="12" />
+		</timeconditions> 
+		<goto if_condition="${not en_servicio or es_festivo}" block="main" task_label="final_fuerahorario" /> 
+		<property label="final_pasoagentetulua" name="interaction.transaction.closereason" value="101" /> 
+		<property label="HematoTulua" name="idCampanya" value="100000418" /> 
+		<settransactionvalue key="numtel" value="${interaction.from}" /> 
+		<call block="Identificar_Cliente" /> 
+		<escape_command label="MohPasoAgente" command="SET VARIABLE &quot;CHANNEL(musicclass)&quot; &quot;icr.DbrScriptInHematoOncologosTulua_V1.0.HematoCola&quot;" result_refid="escape_refid" /> 
+		<queue idagent="${strategy.idagent}" priority="${strategy.priority}" handicap="${strategy.handicap}" idcustomer="${id_sujeto}" idcampaign="${idCampanya}" /> 
+		<property name="interaction.transaction.closereason" value="10" /> 
+		<give_music class="HematoAgente" /> 
+		<sleep hours="1" /> 
+		<break /> 
+		<property label="final_fuerahorario" name="interaction.transaction.closereason" value="100" /> 
+		<play filename="Resources/Audio/Off Line.wav" /> 
+		<hangup /> 
+	</block>
+	<block name="Identificar_Cliente" >
+		<property name="id_sujeto" value="0" /> 
+		<sql label="SelectClientes" statement="DECLARE @numtel VARCHAR(20);&#xD;&#xA;DECLARE @idCampanya  NUMERIC(10,0);&#xD;&#xA;SET @idCampanya= ${idCampanya}&#xD;&#xA;SET @numtel = ${interaction.from}&#xD;&#xA;&#xD;&#xA;SELECT C.idsujeto as idsujeto FROM clientes C JOIN tbidentidadsujetocampanya ISC on C.idsujeto=ISC.idsujeto &#xD;&#xA;       WHERE (ISC.IDCAMPANYA =@idCampanya And c.idsujeto &gt;= 0) AND&#xD;&#xA;                c.TELEFONO=@numtel;" cmdtimeout="10" result_refid="Sujeto_refid" /> 
+		<property if_condition="${ data-table-type::get-row-count( 'Sujeto_refid' )  &gt; 0 }" name="id_sujeto" value="${ data-table-type::get-value( 'Sujeto_refid', 0 ,'idsujeto') }" /> 
+		<echo label="echo1" message="idSujeto para ${interaction.from} es: ${id_sujeto}" /> 
+	</block>
+
+</strategy_script>
