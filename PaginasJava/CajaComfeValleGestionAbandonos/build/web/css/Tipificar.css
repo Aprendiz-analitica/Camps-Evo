@@ -1,0 +1,66 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 24/05/2022, 11:40:28 AM
+    Author     : jvaldes
+*/
+h3{
+font-weight: bold;
+text-transform: uppercase;
+    
+}
+
+label{
+ font-weight: bold;
+ font-family: Roboto;
+}
+
+@font-face{
+  font-family: Roboto;
+  src: url('../fonts/Roboto-Light.ttf');
+}
+
+td{
+ font-weight: bold;
+ font-family: Roboto;
+ color: grey;
+ border : 1px solid #008c44;
+}
+button {
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: 400;
+    text-align: center;
+    white-space: normal;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid transparent;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    border-radius: 4px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-color: #008c44;
+    color: white;
+    border-color: #fcfaf9;
+    font-family: Roboto;
+}
+
+th {
+    text-align: center;
+}
+
+
+
+
+
+
