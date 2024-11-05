@@ -1,0 +1,333 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<dBR_ScriptDiagram dslVersion="1.0.0.0" Id="3c7b9d9c-30bd-4513-b222-d1720e994282" absoluteBounds="0, 0, 16.2, 9.9" name="Sample">
+  <strategyScriptMoniker Id="a3dc6a8c-88a1-470f-8229-6994eede56af" />
+  <nestedChildShapes>
+    <blockShape Id="39c57079-a3ef-4a16-8579-700d8b1737bf" absoluteBounds="0.8, 5.6000000000000005, 10.4, 4.0000000000000009" outlineColor="DimGray" fillColor="DarkGray" outlineThickness="0.015">
+      <blockMoniker Id="20d9b2d2-e4ea-46dc-a883-8a5f19922eb4" />
+      <relativeChildShapes>
+        <blockPortShape Id="c38b3de3-f445-43f7-a328-cf79f2aa5192" absoluteBounds="0.70000000000000007, 5.7500000000000009, 0.2, 0.2">
+          <blockPortMoniker Id="fd9c16a4-44b1-4dcd-bb78-56ab8829f352" />
+        </blockPortShape>
+      </relativeChildShapes>
+      <nestedChildShapes>
+        <propertyShape Id="9bb0e7ab-7506-4939-a9e5-47d27d6730ef" absoluteBounds="4.8, 6.4, 0.5, 0.5" outlineColor="Black" outlineThickness="0.015">
+          <propertyTaskMoniker Id="35e3241f-2e1c-4f7f-845e-37d85f20ab8c" />
+          <relativeChildShapes>
+            <taskPortShape Id="5ffb2b87-f748-460c-a04f-18dd4db402c1" absoluteBounds="5.3, 6.615, 0.06, 0.06" fillColor="Black">
+              <taskPortMoniker Id="52941f77-f4da-4568-8901-f3d504a1b362" />
+            </taskPortShape>
+          </relativeChildShapes>
+        </propertyShape>
+        <queueShape Id="62e60c01-3769-4ff9-898b-6181411fe03f" absoluteBounds="8, 6.4, 0.5, 0.5" outlineColor="Black" outlineThickness="0.015">
+          <queueTaskMoniker Id="50d84a37-7b71-4dd9-87c8-c3f6b4aebb8c" />
+          <relativeChildShapes>
+            <taskPortShape Id="da21a282-0f67-41e0-8f91-c0077e9a2006" absoluteBounds="8.5, 6.615, 0.06, 0.06" fillColor="Black">
+              <taskPortMoniker Id="d25afb9a-82d5-4d6c-95db-fb486a193061" />
+            </taskPortShape>
+            <taskPortShape Id="dace077b-e0f6-49d0-9a0f-70381c4eb52a" absoluteBounds="8.1, 6.9, 0.06, 0.06" fillColor="DarkOrange">
+              <taskPortMoniker Id="2ef65548-f641-4a6f-8538-1e8336614dea" />
+            </taskPortShape>
+            <taskPortShape Id="cb843578-bffa-4251-82e2-b9b1cce09305" absoluteBounds="8.225, 6.9, 0.06, 0.06" fillColor="DarkRed">
+              <taskPortMoniker Id="1193aacc-9304-4af5-892e-014c4d7047f6" />
+            </taskPortShape>
+            <taskPortShape Id="82f8e4e7-1a03-4eac-b4c1-7e4b0e9e7139" absoluteBounds="8.35, 6.9, 0.06, 0.06" fillColor="Indigo">
+              <taskPortMoniker Id="c8f3e169-e8dd-4738-a76f-a6175912a0d5" />
+            </taskPortShape>
+          </relativeChildShapes>
+        </queueShape>
+        <propertyShape Id="0c53aec4-fc2e-40af-b543-c5d2bb145d24" absoluteBounds="8.8, 6.4, 0.5, 0.5" outlineColor="Black" outlineThickness="0.015">
+          <propertyTaskMoniker Id="1ac0f7a8-aa32-4ecd-8a0e-74c1a2a2ef4a" />
+          <relativeChildShapes>
+            <taskPortShape Id="16bfae85-820f-4dfa-be89-f9a3617f2b67" absoluteBounds="9.3, 6.615, 0.06, 0.06" fillColor="Black">
+              <taskPortMoniker Id="7908bf42-d69c-477c-bb88-552f13ac0e4f" />
+            </taskPortShape>
+          </relativeChildShapes>
+        </propertyShape>
+        <give_MusicShape Id="c7b028fb-6270-41c9-a7f5-3236f48005b6" absoluteBounds="9.6000000000000014, 6.4, 0.5, 0.5" outlineColor="Black" outlineThickness="0.015">
+          <give_MusicTaskMoniker Id="26b21c36-e3a3-4869-8dcd-9399a6529323" />
+          <relativeChildShapes>
+            <taskPortShape Id="03fe9ddf-ff96-43ba-b072-345dd3f637c0" absoluteBounds="10.100000000000001, 6.615, 0.06, 0.06" fillColor="Black">
+              <taskPortMoniker Id="67fe46f5-cda3-45ce-96a3-05df608dcf2c" />
+            </taskPortShape>
+          </relativeChildShapes>
+        </give_MusicShape>
+        <sleepShape Id="c9008692-969c-46a5-bee2-01f9ff5f3c5b" absoluteBounds="10.400000000000002, 6.4, 0.5, 0.5" outlineColor="Black" outlineThickness="0.015">
+          <sleepTaskMoniker Id="68704954-d363-4600-b5db-e53a8b826396" />
+          <relativeChildShapes>
+            <taskPortShape Id="df724d4a-45e0-4097-ba6a-b3c49492e673" absoluteBounds="10.900000000000002, 6.615, 0.06, 0.06" fillColor="Black">
+              <taskPortMoniker Id="4f047504-8584-4aab-b3c0-f6c3dd7a4d1f" />
+            </taskPortShape>
+          </relativeChildShapes>
+        </sleepShape>
+        <timeConditionsShape Id="5dbe098b-4cc8-4859-a028-d6e97daa34ad" absoluteBounds="1.6, 6.4, 0.5, 0.5" outlineColor="Black" outlineThickness="0.015">
+          <timeConditionsTaskMoniker Id="dd30583d-7d79-41bb-a20c-8f6f8e32207b" />
+          <relativeChildShapes>
+            <taskPortShape Id="f63819ea-2c73-47b1-89ab-396e91b333c0" absoluteBounds="2.1, 6.615, 0.06, 0.06" fillColor="Black">
+              <taskPortMoniker Id="1f011d69-78e1-4b71-af7f-be73b222b33c" />
+            </taskPortShape>
+          </relativeChildShapes>
+        </timeConditionsShape>
+        <gotoShape Id="829b13fb-c6c6-45cb-b54e-94810346c44f" absoluteBounds="3.2, 6.4, 0.5, 0.5" outlineColor="Red" outlineThickness="0.03">
+          <gotoTaskMoniker Id="8699f9a0-7395-477f-8505-c0aa528b1ad2" />
+          <relativeChildShapes>
+            <taskPortShape Id="afac86d9-09de-4e02-82af-dbc1eb5969cd" absoluteBounds="3.7, 6.615, 0.06, 0.06" fillColor="Black">
+              <taskPortMoniker Id="a4feff52-d817-4763-9f81-edea7e34cf80" />
+            </taskPortShape>
+            <taskPortShape Id="e145e573-19fc-4bdd-a336-3ad5738fbe11" absoluteBounds="3.4250000000000003, 6.9, 0.06, 0.06" fillColor="DarkOrange">
+              <taskPortMoniker Id="d2079d71-c2de-4726-b2fb-568837ed87ec" />
+            </taskPortShape>
+          </relativeChildShapes>
+        </gotoShape>
+        <hangupShape Id="7898ba50-043a-4796-afae-6121675aaf0f" absoluteBounds="4.8, 8, 0.5, 0.5" outlineColor="DimGray" outlineThickness="0.015">
+          <hangupTaskMoniker Id="21caa6b1-3766-471f-b2c9-b54a80f12728" />
+          <relativeChildShapes>
+            <taskPortShape Id="f8bbc459-cefc-419d-a662-54fc9fb26f58" absoluteBounds="5.3, 8.215, 0.06, 0.06" fillColor="Black">
+              <taskPortMoniker Id="6ef6a140-2985-4b6c-aa6e-9f1ef4d4f63d" />
+            </taskPortShape>
+          </relativeChildShapes>
+        </hangupShape>
+        <propertyShape Id="aa612b2c-9fad-4e3b-bb7e-93784b67967c" absoluteBounds="1.6, 8, 0.5, 0.5" outlineColor="Black" outlineThickness="0.015">
+          <propertyTaskMoniker Id="291833d3-3d11-46dd-b419-c449516b6771" />
+          <relativeChildShapes>
+            <taskPortShape Id="5e5d0ff3-a74c-4ae1-984b-c444df968e86" absoluteBounds="2.1, 8.215, 0.06, 0.06" fillColor="Black">
+              <taskPortMoniker Id="c9b97bcd-ead9-4860-9d8b-c69198247637" />
+            </taskPortShape>
+          </relativeChildShapes>
+        </propertyShape>
+        <callShape Id="ec7ae502-c28d-4124-8c14-f053b8596cdb" absoluteBounds="6.4, 6.4, 0.5, 0.5" outlineColor="Black" outlineThickness="0.015">
+          <callTaskMoniker Id="b8714d0e-3b92-4061-a4a3-0c98b6f0643d" />
+          <relativeChildShapes>
+            <taskPortShape Id="869e3cd3-2be3-4ad7-9d93-7d370fc1d7e5" absoluteBounds="6.9, 6.615, 0.06, 0.06" fillColor="Black">
+              <taskPortMoniker Id="6d225646-39e1-4562-8a17-6d05c1f29f50" />
+            </taskPortShape>
+            <taskPortShape Id="4dad5be4-341a-43e9-a7e3-b2aab031d916" absoluteBounds="6.625, 6.9, 0.06, 0.06" fillColor="DarkOrange">
+              <taskPortMoniker Id="22a4627c-8f84-4a80-82a3-119cffd415c1" />
+            </taskPortShape>
+          </relativeChildShapes>
+        </callShape>
+        <propertyShape Id="0e5c5422-aeb8-4c5a-ba4d-073c8afab98b" absoluteBounds="4, 6.4, 0.5, 0.5" outlineColor="Black" outlineThickness="0.015">
+          <propertyTaskMoniker Id="e5cad387-af30-4397-8f7d-620446f77f22" />
+          <relativeChildShapes>
+            <taskPortShape Id="03fa393e-592c-4e75-9c38-1edd35648f41" absoluteBounds="4.5, 6.615, 0.06, 0.06" fillColor="Black">
+              <taskPortMoniker Id="8b143a9a-dbda-4839-9d2d-dc66e2d2fcee" />
+            </taskPortShape>
+          </relativeChildShapes>
+        </propertyShape>
+        <setTransactionValueShape Id="e65ca0da-a3ad-42b6-bce6-24fcddc1582c" absoluteBounds="5.6000000000000005, 6.4, 0.5, 0.5" outlineColor="Black" outlineThickness="0.015">
+          <setTransactionValueTaskMoniker Id="f26a5883-e3b7-44a1-8569-c4a2aee879aa" />
+          <relativeChildShapes>
+            <taskPortShape Id="b2872c1d-7d87-4d5f-bd12-cfd14d2fb188" absoluteBounds="6.1000000000000005, 6.615, 0.06, 0.06" fillColor="Black">
+              <taskPortMoniker Id="df57c7d4-5b56-437e-aad8-3c1f8c23fa49" />
+            </taskPortShape>
+          </relativeChildShapes>
+        </setTransactionValueShape>
+        <playShape Id="24f13aba-ed1a-46bd-a24c-83450bbcddd2" absoluteBounds="3.2, 8, 0.5, 0.5" outlineColor="Black" outlineThickness="0.015">
+          <playTaskMoniker Id="d5343ffd-2a6b-4b78-9cfe-dcb9a4583a9f" />
+          <relativeChildShapes>
+            <taskPortShape Id="394cf33f-8750-47ce-9c6d-a55603f17b08" absoluteBounds="3.7, 8.215, 0.06, 0.06" fillColor="Black">
+              <taskPortMoniker Id="24b5c53f-abe4-44a6-aa80-e6791fdd659b" />
+            </taskPortShape>
+          </relativeChildShapes>
+        </playShape>
+        <escape_CommandShape Id="90f9b3dd-d734-4b43-8802-86c8a719fe03" absoluteBounds="7.2, 6.4, 0.5, 0.5" outlineColor="Black" outlineThickness="0.015">
+          <escape_CommandTaskMoniker Id="f347eaac-516a-40c4-9b33-887c9d888a29" />
+          <relativeChildShapes>
+            <taskPortShape Id="fc98e9fb-55b2-47ba-9b98-d5f8dfc580d1" absoluteBounds="7.7, 6.615, 0.06, 0.06" fillColor="Black">
+              <taskPortMoniker Id="64004565-ad1c-474c-ae74-6efcc59c2660" />
+            </taskPortShape>
+          </relativeChildShapes>
+        </escape_CommandShape>
+        <timeConditionsShape Id="a85e6c00-88ac-4559-ae3c-770bc1c00e63" absoluteBounds="2.4000000000000004, 6.4, 0.5, 0.5" outlineColor="Black" outlineThickness="0.015">
+          <timeConditionsTaskMoniker Id="6e8ddd36-1998-45ea-bc02-49747d97f6c4" />
+          <relativeChildShapes>
+            <taskPortShape Id="8fd59602-34c4-411e-b81b-b90e0e7a6149" absoluteBounds="2.9000000000000004, 6.615, 0.06, 0.06" fillColor="Black">
+              <taskPortMoniker Id="bdf75a70-2b7e-4fec-83c5-8974c3358f76" />
+            </taskPortShape>
+          </relativeChildShapes>
+        </timeConditionsShape>
+      </nestedChildShapes>
+    </blockShape>
+    <connectorShape Id="6bdf0081-b6a8-4257-a69e-b24764aeab41" edgePoints="[(8.55999999999997 : 6.675); (8.8 : 6.65)]" fixedFrom="Caller" fixedTo="NotFixed" color="Black" textColor="Black" dashStyle="Solid">
+      <taskPortReferencesNextTasksMoniker Id="5d2d3f6d-169a-4e8f-b489-f93a10a6a899" />
+      <nodes>
+        <taskPortShapeMoniker Id="da21a282-0f67-41e0-8f91-c0077e9a2006" />
+        <propertyShapeMoniker Id="0c53aec4-fc2e-40af-b543-c5d2bb145d24" />
+      </nodes>
+    </connectorShape>
+    <connectorShape Id="caccbf4a-00f8-4bd5-8f7b-339b2decdb86" edgePoints="[(9.33 : 6.615); (9.33 : 6.65); (9.6 : 6.65)]" fixedFrom="Caller" fixedTo="NotFixed" color="Black" textColor="Black" dashStyle="Solid">
+      <taskPortReferencesNextTasksMoniker Id="25b5f2d9-a8cc-4332-b510-46a3232a3307" />
+      <nodes>
+        <taskPortShapeMoniker Id="16bfae85-820f-4dfa-be89-f9a3617f2b67" />
+        <give_MusicShapeMoniker Id="c7b028fb-6270-41c9-a7f5-3236f48005b6" />
+      </nodes>
+    </connectorShape>
+    <connectorShape Id="e629b2b5-8627-4e99-aad6-45b86a39f83d" edgePoints="[(10.16 : 6.675); (10.4 : 6.65)]" fixedFrom="Caller" fixedTo="NotFixed" color="Black" textColor="Black" dashStyle="Solid">
+      <taskPortReferencesNextTasksMoniker Id="6d8bdb4e-bffc-44db-bb8c-0d2f7c666385" />
+      <nodes>
+        <taskPortShapeMoniker Id="03fe9ddf-ff96-43ba-b072-345dd3f637c0" />
+        <sleepShapeMoniker Id="c9008692-969c-46a5-bee2-01f9ff5f3c5b" />
+      </nodes>
+    </connectorShape>
+    <connectorShape Id="4fbc6829-9378-49f2-9f7e-2c86c6b49987" edgePoints="[(0.9 : 5.85); (1.075 : 5.85); (1.075 : 6.65); (1.6 : 6.65)]" fixedFrom="Caller" fixedTo="NotFixed" color="Black" textColor="Black" dashStyle="Solid">
+      <blockPortReferencesFirstTasksMoniker Id="2a094f98-d562-4dda-bad2-94c4ad7ef9a2" />
+      <nodes>
+        <blockPortShapeMoniker Id="c38b3de3-f445-43f7-a328-cf79f2aa5192" />
+        <timeConditionsShapeMoniker Id="5dbe098b-4cc8-4859-a028-d6e97daa34ad" />
+      </nodes>
+    </connectorShape>
+    <connectorShape Id="a1ee3010-1554-4bf6-8177-e955ebc43722" edgePoints="[(3.425 : 6.96); (1.85 : 8)]" fixedFrom="Caller" fixedTo="NotFixed" color="DarkOrange" textColor="DarkOrange" dashStyle="Dash">
+      <taskPortReferencesNextTasksMoniker Id="3996aed9-6ca7-4146-bbcb-ea95ea472fdf" />
+      <nodes>
+        <taskPortShapeMoniker Id="e145e573-19fc-4bdd-a336-3ad5738fbe11" />
+        <propertyShapeMoniker Id="aa612b2c-9fad-4e3b-bb7e-93784b67967c" />
+      </nodes>
+    </connectorShape>
+    <blockShape Id="ae8dd180-e236-4d20-a034-a9a4c76658de" absoluteBounds="10.4, 2.4000000000000004, 5.6, 2.4000000000000004" outlineColor="DimGray" fillColor="DarkGray" outlineThickness="0.015">
+      <blockMoniker Id="c8a5fe2a-355c-441d-8cf8-9e4c1a85196f" />
+      <relativeChildShapes>
+        <blockPortShape Id="42e149ea-f661-4e0c-aa8b-ded553255d5e" absoluteBounds="10.3, 2.5500000000000003, 0.2, 0.2">
+          <blockPortMoniker Id="d351c067-d2d6-46df-bace-4ea9c9d7c865" />
+        </blockPortShape>
+      </relativeChildShapes>
+      <nestedChildShapes>
+        <echoShape Id="4a75e1f7-1c5e-486c-b661-5a869b59e887" absoluteBounds="13.600000000000001, 3.2, 0.5, 0.5" outlineColor="Black" outlineThickness="0.015">
+          <echoTaskMoniker Id="7382805f-eb79-4169-abaa-c536301717d3" />
+          <relativeChildShapes>
+            <taskPortShape Id="433f4e13-f642-45ab-b0e7-a14de3f4b1fb" absoluteBounds="14.100000000000001, 3.415, 0.06, 0.06" fillColor="Black">
+              <taskPortMoniker Id="15748eaa-55eb-49e1-82be-9531e3a8e431" />
+            </taskPortShape>
+          </relativeChildShapes>
+        </echoShape>
+        <propertyShape Id="30976d43-62e7-4062-ac02-d295a415ae02" absoluteBounds="11.200000000000001, 3.2, 0.5, 0.5" outlineColor="DimGray" outlineThickness="0.015">
+          <propertyTaskMoniker Id="f9ef48ad-da4d-4e82-abfc-5075b1b1f1f0" />
+          <relativeChildShapes>
+            <taskPortShape Id="5649ead6-1908-4568-942e-fae90b684ed1" absoluteBounds="11.700000000000001, 3.415, 0.06, 0.06" fillColor="Black">
+              <taskPortMoniker Id="2d2efafc-2664-4142-ba1c-7867621e9903" />
+            </taskPortShape>
+          </relativeChildShapes>
+        </propertyShape>
+        <sqlShape Id="7d4ba15f-1fc8-4728-961c-4038a364e0bf" absoluteBounds="12, 3.2, 0.5, 0.5" outlineColor="Black" outlineThickness="0.015">
+          <sqlTaskMoniker Id="ab01a535-a41d-4709-8166-a1b74a643617" />
+          <relativeChildShapes>
+            <taskPortShape Id="39bc3809-759c-4340-b0d3-f529aa27be33" absoluteBounds="12.5, 3.415, 0.06, 0.06" fillColor="Black">
+              <taskPortMoniker Id="6d4ca840-3680-4386-a766-2ca0cea01ee2" />
+            </taskPortShape>
+          </relativeChildShapes>
+        </sqlShape>
+        <propertyShape Id="862fa505-e718-4b12-ad5a-f5178f357398" absoluteBounds="12.8, 3.2, 0.5, 0.5" outlineColor="Red" outlineThickness="0.03">
+          <propertyTaskMoniker Id="1a47bba1-3048-4b80-a0cc-c5c2985ce231" />
+          <relativeChildShapes>
+            <taskPortShape Id="cb554f27-72a5-4445-a658-d6d583f1aa0b" absoluteBounds="13.3, 3.415, 0.06, 0.06" fillColor="Black">
+              <taskPortMoniker Id="d8dbed57-20c2-4ec0-9e3a-72f50d6eb351" />
+            </taskPortShape>
+          </relativeChildShapes>
+        </propertyShape>
+      </nestedChildShapes>
+    </blockShape>
+    <connectorShape Id="9aef5ef3-bca7-4c18-816f-23aa72253138" edgePoints="[(10.5 : 2.65); (10.675 : 2.65); (10.675 : 3.45); (11.2 : 3.45)]" fixedFrom="Caller" fixedTo="NotFixed" color="Black" textColor="Black" dashStyle="Solid">
+      <blockPortReferencesFirstTasksMoniker Id="172f4678-9213-47fc-9833-87e4e6505e28" />
+      <nodes>
+        <blockPortShapeMoniker Id="42e149ea-f661-4e0c-aa8b-ded553255d5e" />
+        <propertyShapeMoniker Id="30976d43-62e7-4062-ac02-d295a415ae02" />
+      </nodes>
+    </connectorShape>
+    <connectorShape Id="0db03876-65d0-4d2d-a46b-2b9c2308a46b" edgePoints="[(11.76 : 3.475); (12 : 3.45)]" fixedFrom="Caller" fixedTo="NotFixed" color="Black" textColor="Black" dashStyle="Solid">
+      <taskPortReferencesNextTasksMoniker Id="8c877537-b26d-446a-b9ab-4afa8f5f7b7e" />
+      <nodes>
+        <taskPortShapeMoniker Id="5649ead6-1908-4568-942e-fae90b684ed1" />
+        <sqlShapeMoniker Id="7d4ba15f-1fc8-4728-961c-4038a364e0bf" />
+      </nodes>
+    </connectorShape>
+    <connectorShape Id="798c195e-5964-4f63-bcda-3077631fce72" edgePoints="[(12.56 : 3.475); (12.8 : 3.45)]" fixedFrom="Caller" fixedTo="NotFixed" color="Black" textColor="Black" dashStyle="Solid">
+      <taskPortReferencesNextTasksMoniker Id="75348156-1c7d-4fe3-b73b-0a19a0d89336" />
+      <nodes>
+        <taskPortShapeMoniker Id="39bc3809-759c-4340-b0d3-f529aa27be33" />
+        <propertyShapeMoniker Id="862fa505-e718-4b12-ad5a-f5178f357398" />
+      </nodes>
+    </connectorShape>
+    <connectorShape Id="4837f5e7-dbf9-4a4d-b09d-5708828cc34d" edgePoints="[(13.36 : 3.475); (13.6 : 3.45)]" fixedFrom="Caller" fixedTo="NotFixed" color="Black" textColor="Black" dashStyle="Solid">
+      <taskPortReferencesNextTasksMoniker Id="47a9e3de-5bab-42f6-92ce-9b5c9093eafd" />
+      <nodes>
+        <taskPortShapeMoniker Id="cb554f27-72a5-4445-a658-d6d583f1aa0b" />
+        <echoShapeMoniker Id="4a75e1f7-1c5e-486c-b661-5a869b59e887" />
+      </nodes>
+    </connectorShape>
+    <connectorShape Id="e6cf6e1b-1498-4a6e-8ecd-3378df111dc4" edgePoints="[(6.685 : 6.9); (10.3273475737224 : 2.71871408120591)]" manuallyRouted="true" fixedFrom="Caller" fixedTo="Caller" color="DarkOrange" textColor="DarkOrange" dashStyle="Dash">
+      <taskPortReferencesBlockPortsMoniker Id="01743623-d35e-4c7d-958c-f6588e87a24d" />
+      <nodes>
+        <taskPortShapeMoniker Id="4dad5be4-341a-43e9-a7e3-b2aab031d916" />
+        <blockPortShapeMoniker Id="42e149ea-f661-4e0c-aa8b-ded553255d5e" />
+      </nodes>
+    </connectorShape>
+    <connectorShape Id="39a15997-791c-44ed-9bfd-6d4b8e9d0c1d" edgePoints="[(4.55999999999997 : 6.675); (4.8 : 6.65)]" fixedFrom="Caller" fixedTo="NotFixed" color="Black" textColor="Black" dashStyle="Solid">
+      <taskPortReferencesNextTasksMoniker Id="69f3ab7c-13f1-4eb9-9d17-08a18432d5dc" />
+      <nodes>
+        <taskPortShapeMoniker Id="03fa393e-592c-4e75-9c38-1edd35648f41" />
+        <propertyShapeMoniker Id="9bb0e7ab-7506-4939-a9e5-47d27d6730ef" />
+      </nodes>
+    </connectorShape>
+    <connectorShape Id="43b439f8-550b-46cc-8836-c12c7fd66d53" edgePoints="[(3.75999999999997 : 6.675); (4 : 6.65)]" fixedFrom="Caller" fixedTo="NotFixed" color="Black" textColor="Black" dashStyle="Solid">
+      <taskPortReferencesNextTasksMoniker Id="b55995a0-e241-4c7d-b252-078201317322" />
+      <nodes>
+        <taskPortShapeMoniker Id="afac86d9-09de-4e02-82af-dbc1eb5969cd" />
+        <propertyShapeMoniker Id="0e5c5422-aeb8-4c5a-ba4d-073c8afab98b" />
+      </nodes>
+    </connectorShape>
+    <connectorShape Id="5e0a01d8-25b4-4a63-a883-17a200845392" edgePoints="[(5.35999999999997 : 6.675); (5.6 : 6.65)]" fixedFrom="Caller" fixedTo="NotFixed" color="Black" textColor="Black" dashStyle="Solid">
+      <taskPortReferencesNextTasksMoniker Id="452ccd56-1907-4707-8730-80635c87d509" />
+      <nodes>
+        <taskPortShapeMoniker Id="5ffb2b87-f748-460c-a04f-18dd4db402c1" />
+        <setTransactionValueShapeMoniker Id="e65ca0da-a3ad-42b6-bce6-24fcddc1582c" />
+      </nodes>
+    </connectorShape>
+    <connectorShape Id="67266605-7a1f-42fc-b573-c39366c85bb3" edgePoints="[(6.15999999999997 : 6.675); (6.4 : 6.65)]" fixedFrom="Caller" fixedTo="NotFixed" color="Black" textColor="Black" dashStyle="Solid">
+      <taskPortReferencesNextTasksMoniker Id="f167ae12-409b-4d12-8f79-72e875565467" />
+      <nodes>
+        <taskPortShapeMoniker Id="b2872c1d-7d87-4d5f-bd12-cfd14d2fb188" />
+        <callShapeMoniker Id="ec7ae502-c28d-4124-8c14-f053b8596cdb" />
+      </nodes>
+    </connectorShape>
+    <connectorShape Id="025477aa-cd59-426d-87c9-7ec7d4bb075f" edgePoints="[(6.93 : 6.615); (6.93 : 6.65); (7.2 : 6.65)]" fixedFrom="Caller" fixedTo="NotFixed" color="Black" textColor="Black" dashStyle="Solid">
+      <taskPortReferencesNextTasksMoniker Id="e08e584f-f720-4c4a-9939-4c83ea78554d" />
+      <nodes>
+        <taskPortShapeMoniker Id="869e3cd3-2be3-4ad7-9d93-7d370fc1d7e5" />
+        <escape_CommandShapeMoniker Id="90f9b3dd-d734-4b43-8802-86c8a719fe03" />
+      </nodes>
+    </connectorShape>
+    <connectorShape Id="2a7aae40-2643-4a47-94b7-b32f3bff9686" edgePoints="[(7.75999999999997 : 6.675); (8 : 6.65)]" fixedFrom="Caller" fixedTo="NotFixed" color="Black" textColor="Black" dashStyle="Solid">
+      <taskPortReferencesNextTasksMoniker Id="b6b8240d-50db-44a9-88e9-5273e128ca4f" />
+      <nodes>
+        <taskPortShapeMoniker Id="fc98e9fb-55b2-47ba-9b98-d5f8dfc580d1" />
+        <queueShapeMoniker Id="62e60c01-3769-4ff9-898b-6181411fe03f" />
+      </nodes>
+    </connectorShape>
+    <connectorShape Id="890fdafb-c1b1-4ccf-a8b4-96c3937b6c69" edgePoints="[(2.16000000000027 : 8.275); (3.2 : 8.25)]" fixedFrom="Caller" fixedTo="NotFixed" color="Black" textColor="Black" dashStyle="Solid">
+      <taskPortReferencesNextTasksMoniker Id="055225ac-321f-4640-8ce3-388ab0151c77" />
+      <nodes>
+        <taskPortShapeMoniker Id="5e5d0ff3-a74c-4ae1-984b-c444df968e86" />
+        <playShapeMoniker Id="24f13aba-ed1a-46bd-a24c-83450bbcddd2" />
+      </nodes>
+    </connectorShape>
+    <connectorShape Id="e82e20a7-2317-42ed-a4d1-fb4c0fd07244" edgePoints="[(3.76000000000027 : 8.275); (4.8 : 8.25)]" fixedFrom="Caller" fixedTo="NotFixed" color="Black" textColor="Black" dashStyle="Solid">
+      <taskPortReferencesNextTasksMoniker Id="53da97c0-1b1b-4a83-82b6-e6dfb94473d3" />
+      <nodes>
+        <taskPortShapeMoniker Id="394cf33f-8750-47ce-9c6d-a55603f17b08" />
+        <hangupShapeMoniker Id="7898ba50-043a-4796-afae-6121675aaf0f" />
+      </nodes>
+    </connectorShape>
+    <connectorShape Id="e4f1a825-6f0a-4923-bc5f-fdbc1589518e" edgePoints="[(2.13 : 6.615); (2.13 : 6.65); (2.4 : 6.65)]" fixedFrom="Caller" fixedTo="Algorithm" color="Black" textColor="Black" dashStyle="Solid">
+      <taskPortReferencesNextTasksMoniker Id="8ce2cf79-cd73-479f-9bd8-fac5d4f3df49" />
+      <nodes>
+        <taskPortShapeMoniker Id="f63819ea-2c73-47b1-89ab-396e91b333c0" />
+        <timeConditionsShapeMoniker Id="a85e6c00-88ac-4559-ae3c-770bc1c00e63" />
+      </nodes>
+    </connectorShape>
+    <connectorShape Id="d43985ff-a3fc-43e7-aaf9-5a970a0bfb8f" edgePoints="[(2.93 : 6.615); (2.93 : 6.65); (3.2 : 6.65)]" fixedFrom="Caller" fixedTo="Algorithm" color="Black" textColor="Black" dashStyle="Solid">
+      <taskPortReferencesNextTasksMoniker Id="d79d3f72-1aba-4253-84e0-d2a7d72d9266" />
+      <nodes>
+        <taskPortShapeMoniker Id="8fd59602-34c4-411e-b81b-b90e0e7a6149" />
+        <gotoShapeMoniker Id="829b13fb-c6c6-45cb-b54e-94810346c44f" />
+      </nodes>
+    </connectorShape>
+  </nestedChildShapes>
+</dBR_ScriptDiagram>

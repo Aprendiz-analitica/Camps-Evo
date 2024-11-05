@@ -1,0 +1,291 @@
+﻿<%@ Master Language="VB" AutoEventWireup="false" %>
+
+<%@ Register Assembly="VisualEvolutionLibrary" Namespace="Icr.Evolution.VisualEvolutionLibrary"
+    TagPrefix="evo" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<%
+    Response.CacheControl = "No-Cache"
+    Response.AddHeader("Pragma", "No-Cache")
+    Response.Expires = 0
+ %>
+
+<html xmlns="http://www.w3.org/1999/xhtml" >
+
+<head id="Head1" runat="server">
+    <title><asp:ContentPlaceHolder ID="TitleContent" runat="server" /></title>  
+
+    <link rel="Stylesheet" type="text/css" href="Resources/css/Script.css" />
+    <link rel="Stylesheet" type="text/css" href="Resources/css/Basico.css" />
+	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="text/JavaScript" src="Resources/js/agentapi.js"></script>
+    <script type="text/javascript">
+        agentapi.AgentAppType = "<%=AgentApp.AgentAppType%>";
+        agentapi.WebAgentAuthToken = "<%=AgentApp.WebAgentAuthToken%>";
+        agentapi.WebAgentServiceUrl = "<%=AgentApp.WebAgentServiceUrl%>";
+    </script>
+
+    <script type="text/javascript">
+            function Transf_Encuesta() {
+            agentapi.FastTransferActiveCall(2004)
+            .done(function () {
+
+            })
+            .fail(function (code, cause) {
+                alert('No se pudo realizar la Transferencia');
+            });
+        }
+            function Transf_ae() {
+            agentapi.FastTransferActiveCall('2010')
+            .done(function () {
+
+            })
+            .fail(function (code, cause) {
+                alert('No se pudo realizar la Transferencia');
+            });
+        }
+        function Transf_EPS() {
+            agentapi.FastTransferActiveCall('*992227')
+            .done(function () {
+
+            })
+            .fail(function (code, cause) {
+                alert('No se pudo realizar la Transferencia');
+            });
+        }
+
+        function Conferencia_v2() {
+            makeHttpRequest("ConferenciaAMI.aspx")
+            .done(function (response) {
+                                        Swal.fire({
+                                        title: 'Inicio de grabación exitoso',
+                                        text: 'Comience protocolo de HabeasData',
+                                        imageUrl: 'Resources/images/INIGRABHD.png',
+                                        confirmButtonColor: '#0C7834', 
+                                        imageWidth: 200,
+                                        imageHeight: 200,});
+            })
+            .fail(function (code, cause) {
+                alert("Envio ConferenciaAMI KO. Code: " + code + " , cause: " + cause);
+            });
+        }
+        function EnviarMsgDBR() {
+            makeHttpRequest("EnvioMsgDBR.aspx")
+            .done(function (response) {
+                                        Swal.fire({
+                                        title: 'Final de grabación exitoso',
+                                        text: 'HabeasData almacenado',
+                                        imageUrl: 'Resources/images/INIGRABHD.png',
+                                        confirmButtonColor: '#0C7834', 
+                                        imageWidth: 200,
+                                        imageHeight: 200,});
+            })
+            .fail(function (code, cause) {
+                alert("Envio MsgDBR KO. Code: " + code + " , cause: " + cause);
+            });
+        }
+
+        document.oncontextmenu = function () {
+            return false;
+        };
+        document.onkeydown = function (event) {
+            event = event || window.event;
+            var doPrevent = false;
+
+            if (event.keyCode == 116                     /* F5 - Refresh */ ||
+               (event.keyCode == 82 && event.ctrlKey)    /* CTRL + R - Refresh */ ||
+                event.keyCode == 8                       /* Backspace - Navigate back */ ||
+               (event.keyCode == 37 && event.altKey)     /* ALT + Left Arrow - Navigate back */ ||
+               (event.keyCode == 121 && event.shiftKey)  /* SHIFT + F10 - Context menu */) {
+
+                var d = event.srcElement || event.target;
+
+                if (event.keyCode == 8 && ((d.tagName.toUpperCase() === 'INPUT' && (d.type.toUpperCase() === 'TEXT' || d.type.toUpperCase() === 'PASSWORD')) || d.tagName.toUpperCase() === 'TEXTAREA')) {
+                    doPrevent = d.readOnly || d.disabled;
+                }
+                else {
+                    doPrevent = true;
+                }
+            }
+            if (doPrevent) {
+                event.preventDefault();
+            }
+
+            return true;
+        };
+            function makeHttpRequest(sURL) {
+            /// <summary>Realiza una petición http asincrona</summary>
+            /// <param name="sURL" type="String">idTransaccion</param>
+            /// <param name="resultFunc" type="Func">Función de resultado, nos van a pasar un objeto response y un objeto deferred.</param>
+            /// <returns type="Deferred"></returns>
+            var xmlhttp;
+            if (window.XMLHttpRequest) {
+                // code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp = new XMLHttpRequest();
+            } else {
+                // code for IE6, IE5
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+
+            var deferred = new Deferred();
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4) {
+                    try {
+                        if (xmlhttp.status != 200)
+                            throw new Error("Http status." + xmlhttp.status);
+
+                        var response = JSON.parse(xmlhttp.responseText);
+                        if (response.result)
+                            deferred.resolve(response);
+                        else
+                            deferred.reject(response.code, response.cause);
+                    }
+                    catch (ex) {
+                        deferred.reject(0, "[makeHttpRequest] {sURL=" + sURL + "}: " + ex.Message);
+                    }
+                }
+            };
+
+            xmlhttp.open("GET", sURL, true);
+            xmlhttp.send();
+
+            return deferred;
+        }
+        
+
+
+
+
+
+    </script>
+
+    <asp:ContentPlaceHolder ID="HeadContent" runat="server" />
+
+    </head>
+
+<body>	
+    <form id="form1" runat="server">
+    
+    <%
+        Dim time As DateTime = DateTime.Now
+        Dim format As String = "\Fec\ha: dd-MM-yyyy - \Hora: HH:mm"
+        Dim sImagen As String = "fas fa-phone"
+        Dim sImagenTitulo As String = "Canal telefonico"
+    %>
+    <table style="margin-left: auto; margin-right:auto;">
+        <tbody>
+            <tr>
+            <td colspan = "3" style="padding: 5px 0px 5px 0px; text-align: center">
+                 <img src="https://www.comfenalcovalle.com.co/wp-content/uploads/2019/08/Recurso-1.png" />
+            </td>
+            </tr>
+            <tr>
+                <th style="border: 1px solid #9dc541; text-align:center; background-color: #9dc541; font-size: 16px; color: #FFFFFF; font-weight: bold; width: 50%; padding-top: 10px; padding-bottom: 10px;" 
+                    align="center" colspan="2">
+                    Habeas Data</th>
+                <th style="border: 1px solid #9dc541; text-align:center; background-color: #9dc541; font-size: 16px; color: #FFFFFF; font-weight: bold; width: 50%;" 
+                    align="center">
+                    Transferencias
+                </th>
+            </tr>
+
+
+            <tr>
+                    <td style="border: 1px solid #9dc541; font-size: 16px; color: #0c5e16; font-weight: bold; width: 50%; padding-top: 5px; padding-bottom: 5px;" 
+                        align="center" colspan="2">                
+                        Cedula<br />
+                        <asp:TextBox ID="Cedula" runat="server" Font-Bold="True" ForeColor="#0C5E16" 
+                            ontextchanged="Cedula_TextChanged" AutoPostBack="True"></asp:TextBox>
+                    </td>
+
+                    <td style="border: 1px solid #9dc541; font-size: 16px; color: #9dc541; font-weight: bold; width: 50%;" 
+                        align="center">                
+                        <input id="Button8" type="button" value="Empresas" onclick="Transf_ae()"                         
+                               
+                            style="border: 1px solid #0c5e16; color: #FFFFFF; font-size: 16px; background-color: #9dc541; width: 150px; height: 30px; background-image: none;" />
+                    </td>
+
+            </tr>
+            <tr>
+                <td style="border: 1px solid #9dc541; font-size: 16px; color: #9dc541; font-weight: bold; width: 25%; padding-top: 5px; padding-bottom: 5px;" 
+                    align="center">                
+                    <input id="Button5" type="button" value="Grabar" onclick="Conferencia_v2()" 
+                       
+                        style="border: 1px solid #0c5e16; color: #FFFFFF; font-size: 16px; 
+                        background-color: #9dc541; width: 100px; height: 30px; background-image: none;"/></td>
+                <td style="border: 1px solid #9dc541; font-size: 16px; color: #9dc541; font-weight: bold; width: 25%;" 
+                    align="center">                
+                    <input id="Button6" type="button" value="Detener" onclick="EnviarMsgDBR()" 
+                            
+                        
+                        style="border: 1px solid #0c5e16; color: #FFFFFF; font-size: 16px; background-color: #9dc541; width: 100px; height: 30px; background-image: none;"/></td>
+                
+                
+                <td style="border: 1px solid #9dc541; font-size: 16px; color: #9dc541; font-weight: bold; width: 50%;" 
+                    align="center">                
+                        <input id="Button11" type="button" value="EPS" onclick="Transf_EPS()"                         
+                               
+                            
+                        style="border: 1px solid #0c5e16; color: #FFFFFF; font-size: 16px; background-color: #9dc541; width: 150px; height: 30px; background-image: none;"  /></td>
+            </tr>
+
+            <tr>
+                <td style="border: 1px solid #9dc541; font-size: 16px; color: #9dc541; font-weight: bold; padding-top: 5px; padding-bottom: 5px;" 
+                    align="center" colspan="2">                
+                    &nbsp;</td>
+                
+                
+                <td style="border: 1px solid #9dc541; font-size: 16px; color: #9dc541; font-weight: bold; width: 50%;" 
+                    align="center">                
+                    <input id="Button10" type="button" value="Encuesta" 
+                        onclick="Transf_Encuesta()" 
+                        
+                        
+                        
+                        
+                        style="border: 1px solid #0c5e16; color: #FFFFFF; font-size: 16px; background-color: #9dc541; width: 150px; height: 30px; background-image: none;"/></td>
+            </tr>
+
+            <tr>
+                <td style="padding: 5px 0px 5px 0px; width: 50%; color: #0c5e16; font-size: 16px; font-weight: bold;" 
+                    colspan="2">
+                    Transaccion: <%= Gestion.Transaccion.IdTransaccion%>
+                    
+                </td>
+                <td style="padding: 5px 0px 5px 0px; width: 50%; color: #0c5e16; font-size: 16px; font-weight: bold; text-align: right;">
+                    <%= time.ToString(format) %>
+                </td>
+            </tr>
+            <tr>
+                <td colspan ="3">
+                <asp:ContentPlaceHolder ID="MainContent" runat="server"></asp:ContentPlaceHolder>
+                </td>
+            </tr>
+            <tr>
+                <td colspan ="3">
+                    <asp:ContentPlaceHolder ID="FooterContent" runat="server"></asp:ContentPlaceHolder>
+                </td>
+            </tr>
+            
+        </tbody>
+    </table> 
+ </form>
+</body>
+
+<script runat="server">
+    
+    Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        
+        If Not EvoAPI.IsLoaded Then
+            Message.ShowError("Las variables se han perdido por inactividad de la sesion. Puede reiniciar el argumentario pulsando el boton ""Inicio""")
+        End If
+        
+    End Sub
+    
+    Protected Sub Cedula_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs)
+        Gestion.Transaccion.KeyValueCollection.SetValue("Cedula", Cedula.Text)
+    End Sub
+</script>
+
+</html>

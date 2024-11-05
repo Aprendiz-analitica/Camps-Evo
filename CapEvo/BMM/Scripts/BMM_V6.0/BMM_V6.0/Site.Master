@@ -1,0 +1,280 @@
+﻿<%@ Master Language="VB" AutoEventWireup="false" %>
+
+<%@ Register Assembly="VisualEvolutionLibrary" Namespace="Icr.Evolution.VisualEvolutionLibrary"
+    TagPrefix="evo" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<%
+    Response.CacheControl = "No-Cache"
+    Response.AddHeader("Pragma", "No-Cache")
+    Response.Expires = 0
+ %>
+
+<html xmlns="http://www.w3.org/1999/xhtml" >
+
+<head id="Head1" runat="server">
+    <title><asp:ContentPlaceHolder ID="TitleContent" runat="server" /></title>  
+
+    <link rel="Stylesheet" type="text/css" href="Resources/css/Script.css" />
+    <link rel="Stylesheet" type="text/css" href="Resources/css/Basico.css" />
+    <link rel="Stylesheet" type="text/css" href="Resources/css/bootstrap.css" />
+    <link rel="Stylesheet" type="text/css" href="Resources/css/styles.css" />
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="text/JavaScript" src="Resources/js/agentapi.js"></script>
+    <script type="text/JavaScript" src="Resources/js/timer.js"></script>
+    <script type="text/javascript" src="Resources/js/JQuery.js"></script>
+    <script type="text/JavaScript" src="Resources/js/agentapi.js"></script>
+    <script type="text/javascript">
+        agentapi.AgentAppType = "<%=AgentApp.AgentAppType%>";
+        agentapi.WebAgentAuthToken = "<%=AgentApp.WebAgentAuthToken%>";
+        agentapi.WebAgentServiceUrl = "<%=AgentApp.WebAgentServiceUrl%>";
+    </script>
+
+    <script type="text/javascript">
+
+        var idCall;
+        var token;
+        var url = "https://8aozurcink.execute-api.us-east-2.amazonaws.com";
+        var contadorPausas = 0;
+        var idllamadaHold = 0;
+                $(document).ready(function () {
+            $("#divTemporizador").hide();
+            var temp;
+            var settings = {
+                            "url": url+"/auth/login",
+                            "method": "POST",
+                            "timeout": 0,
+                            "headers": {
+                              "username": "UsrCBolivarBgta",
+                              "password": "*CB0L1b4RB0Gt4-O22."
+                            },
+                          };
+                   $.ajax(settings).done(function (response) {
+                     token = response.token;
+                    });        
+        });
+
+        function pausar() {
+                contadorPausas++; // incrementa el contador de pausas cada vez que se llama a esta función
+                var idllamada = <%= EvoAPI.Transaction.TransactionId%>;
+                idllamadaHold = idllamada * 10 + contadorPausas;
+                var fechaActual = new Date();
+                var year = fechaActual.getFullYear();
+                var month = (fechaActual.getMonth() + 1).toString().padStart(2, '0');
+                var day = fechaActual.getDate().toString().padStart(2, '0');
+                var fechaFormateada = `${year}-${month}-${day}`;
+                var horaActual = new Date().toLocaleTimeString('en-GB', {
+                    hour12: false,
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                var tinicio = fechaFormateada + ' ' + horaActual;
+                var idagente = <%= EvoAPI.Agent.AgentId%>;
+                var idcampanya = <%= EvoAPI.Campaign.CampaignId%>;  
+                agentapi.GetActiveCall()
+                .done(function (callId) {
+                    $("#divTemporizador").show();
+                    desactivarBoton();
+                    startTimer();
+                    idCall = callId;
+                    agentapi.Hold(idCall);
+                    var insertartinicio = {
+                        "url": url+"/webservicefenalco/cbolivarbgta/ingresartiemposhold",
+                        "method": "POST",
+                        "timeout": 0,
+                        "headers": {
+                        "Authorization": "Bearer "+ token,
+                        "Content-Type": "application/json"
+                        },
+                            "data": JSON.stringify({
+                                "idTransaccion": idllamada,
+                                "tInicio": tinicio,
+                                "tFinal": tinicio,
+                                "idAgente": idagente,
+                                "idCampanya": idcampanya,
+                                "idTransaccionHold": idllamadaHold,
+                                "bdEvoAws" : false
+                            }),
+                        };
+                    $.ajax(insertartinicio).done(function (response) {
+                         
+                    });
+                })
+                .fail(function (code, cause) {
+                    alert('Error al pausar la llamada activa:. Code:' + code + '. Cause:' + cause);
+                }); 
+
+        }
+
+        function recuperar() {
+                var fechaActual = new Date();
+                var year = fechaActual.getFullYear();
+                var month = (fechaActual.getMonth() + 1).toString().padStart(2, '0');
+                var day = fechaActual.getDate().toString().padStart(2, '0');
+                var fechaFormateada = `${year}-${month}-${day}`;
+                var horaActual = new Date().toLocaleTimeString('en-GB', {
+                    hour12: false,
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                var tfinal = fechaFormateada + ' ' + horaActual;
+            $("#divTemporizador").hide();
+            stopTimer();
+            agentapi.Retrieve(idCall)
+            .done(function () {
+                        var insertartfinal = {
+                        "url": url+"/webservicefenalco/cbolivarbgta/actualizartiemposhold",
+                        "method": "POST",
+                        "timeout": 0,
+                        "headers": {
+                        "Authorization": "Bearer "+ token,
+                        "Content-Type": "application/json"
+                        },
+                            "data": JSON.stringify({
+                                "tFinal": tfinal,
+                                "idTransaccionHold": idllamadaHold,
+                                "bdEvoAws" : false
+                            }),
+                        };
+                    $.ajax(insertartfinal).done(function (response) {
+                         
+                    });
+
+            })
+            .fail(function (code, cause) {
+             alert('RealizarLlamada falló. Code:'+ code + '. Cause:'+cause);
+            });
+            activarBoton();
+        }
+
+        function desactivarBoton() {
+            // Obtener el botón por su ID
+            var botones = document.querySelectorAll('[id^="Button"]');
+            for (var i = 0; i < botones.length; i++) {
+                // Desactivar el botón actual
+                botones[i].disabled = true;
+            };
+        }
+        function activarBoton() {
+            var botones = document.querySelectorAll('[id^="Button"]');
+            for (var i = 0; i < botones.length; i++) {
+                // Desactivar el botón actual
+                botones[i].disabled = false;
+            };
+        }
+        
+
+
+
+       
+
+    </script>
+
+    <asp:ContentPlaceHolder ID="HeadContent" runat="server" />
+
+    <style type="text/css">
+    </style>
+
+</head>
+
+<body bgcolor="#28a745">
+
+<%
+    Dim time As DateTime = DateTime.Now
+    Dim format As String = "\Fec\ha: dd-MM-yyyy - \Hora: HH:mm"
+    Dim sImagen As String = "fas fa-phone"
+    Dim sImagenTitulo As String = "Canal telefonico"
+    
+     
+    %>	
+    <div>
+        <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #ed7203 ;">
+            <a class="navbar-brand" href="SeleccionarCallBack.aspx" style="background-color: #ed7203">
+                <img style="position:relative; width: 80px;" 
+            src="https://asertis.com.co/wp-content/uploads/2021/03/logo-asertis-blanco.png" 
+            alt="Asertis">
+            </a>
+              <div class="collapse navbar-collapse" id="Div1">
+                    <ul class="navbar-nav">
+                      <li class="nav-item">
+                        <span style="color: #FFFFFF; padding: 10px;  font-weight: bold;">Campaña: <%= EvoAPI.Campaign.Name%></span> 
+                      </li>
+                      <li class="nav-item">
+                        <span style="color: #FFFFFF; padding: 10px;  font-weight: bold;">Agente: <%= EvoAPI.Agent.Name%>&nbsp;<%= EvoAPI.Agent.SecondName%>&nbsp;<%= EvoAPI.Agent.LastName%></span> 
+                      </li>
+                      <li class="nav-item">
+                        <span style="color: #FFFFFF; padding: 10px;  font-weight: bold;">Transaccion:&nbsp;<%= EvoAPI.Transaction.TransactionId%></span> 
+                      </li>
+                      
+                      <li class="nav-item">
+                        <span style="color: #FFFFFF; padding: 10px;  font-weight: bold;"><%= time.ToString(format) %></span> 
+                      </li>
+
+                    </ul>
+             </div>
+                                   <input id="BtnPausar" type="button" value="PAUSAR" onclick="pausar()"
+                 
+            
+            style="font-size: 12px; background-color: #249E6B; width: 200px; height: 40px; background-image: none; font-weight: bold; margin-right: 0; color: #FFFFFF; border: 1px solid transparent; border-radius:4px"
+            ; />&nbsp;&nbsp;&nbsp;&nbsp;            
+          <input id="BtnRecuperar" type="button" value="RECUPERAR" onclick="recuperar()"
+                 
+            
+            
+            style="border: 1px solid transparent; font-size: 12px; background-color: #249E6B; width: 200px; height: 40px; background-image: none; font-weight: bold; margin-right: 0; color: #FFFFFF; border-radius: 4px;" /></nav>
+        </nav>
+         </div>
+         <br />
+        <div id="divTemporizador" class="container">
+            <div class="clock">
+            <input class="number" type="text" maxlength="2" value="00"><span>Min</span><input class="number" type="text" maxlength="2" value="55"><span>Sec</span>
+            </div>
+        </div>
+
+    <form id="form1" runat="server">
+                  <div style="margin-left: auto; margin-right:auto;">
+                  <ul class="nav nav-pills">
+
+                </ul>
+                </div>
+                <br /> 
+
+
+    <table style="width:603px; margin-left: auto; margin-right:auto;">
+        <tbody>
+            <tr>
+                <td>
+                <asp:ContentPlaceHolder ID="MainContent" runat="server"></asp:ContentPlaceHolder>
+                </td>
+            </tr>
+            
+        </tbody>
+    </table> 
+<!-- <div class="off-canvas-overlay"></div> -->
+    
+ </form>
+    <div>
+        <asp:ContentPlaceHolder ID="FooterContent" runat="server"></asp:ContentPlaceHolder>
+    </div>
+</body>
+
+<script runat="server">
+    
+    Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        
+        If Not EvoAPI.IsLoaded Then
+            Message.ShowError("Las variables se han perdido por inactividad de la sesion. Puede reiniciar el argumentario pulsando el boton ""Inicio""")
+        End If
+        
+    End Sub
+    
+</script>
+
+</html>

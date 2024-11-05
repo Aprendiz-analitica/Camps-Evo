@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{e9ea7d4e-c084-4d2f-a61f-28a0b3d8857f}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>MyRootNamespace</RootNamespace>
+    <AssemblyName>MyAssemblyName</AssemblyName>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <TargetFrameworkMoniker>.NETFramework,Version=v4.0</TargetFrameworkMoniker>
+    <Deploy>1</Deploy>
+    <RemoteService>https://evolution.fenalcovalle.com.co/Evolution/DeveloperService/DeveloperService.svc</RemoteService>
+    <DeployPath>
+    </DeployPath>
+    <Name>DbrScriptCBolivarInBogota_V2</Name>
+    <UserName>NCADMIN</UserName>
+    <UserPassword>0xBEE185D4E2189DFD3CB2A6175A97012E</UserPassword>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>false</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
+    <Folder Include="Resources\Grammar" />
+    <Folder Include="Resources\Moh" />
+    <Folder Include="Resources\Audio" />
+    <Folder Include="Resources\Moh\construbolivarbgta" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Default.dbrscript">
+      <SubType>Designer</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Default.dbrscript.diagram">
+      <DependentUpon>Default.dbrscript</DependentUpon>
+    </None>
+    <Content Include="Resources\Audio\1 audio hold 1ro sep.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\1. BIENVENIDA.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\12. OPCION NO VALIDA 1.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\13. OPCION NO VALIDA 2.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\2. NIVEL 1 OPCIONES.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\3. NIVEL 2 DOCUMENTO.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\4. NIVEL 3.1 TRANSFERENCIA.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\5. NIVEL 3.2 MANUAL PROPIETARIO.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\6. NIVEL 3.3 CALIFICACION SERVICIO - SECO.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\7. NIVEL 3.4 SOLICITUDES.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\8. HORARIOS IVR NOCHE Y  FIN SEMANA.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\Cierre Linea Familiar (Abril.16.2022).wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\P . AUDIOS NUMER - CONFIRMACION.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\P. 4  NUMERO - SECO .wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\P. 5 CONFIRMACION - SECO.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\P. AUDIO 2 120622.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\P. AUDIO 2.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\P. AUDIO 3  NUMERO - SECO.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\P. AUDIO DESPEDIDA - CALL BACK.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Grammar\void" />
+    <Content Include="Resources\Moh\construbolivarbgta\1 audio hold 1ro sep.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Moh\void" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\ICR\Developer.NET\Developer.NET.DBRScript.targets" />
+</Project>

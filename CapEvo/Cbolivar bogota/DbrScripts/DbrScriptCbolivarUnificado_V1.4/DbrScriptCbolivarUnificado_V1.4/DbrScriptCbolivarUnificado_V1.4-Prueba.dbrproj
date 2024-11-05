@@ -1,0 +1,340 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{6804b473-4f53-400d-9d7f-cd460ccc8a25}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>MyRootNamespace</RootNamespace>
+    <AssemblyName>MyAssemblyName</AssemblyName>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <TargetFrameworkMoniker>.NETFramework,Version=v4.0</TargetFrameworkMoniker>
+    <Deploy>1</Deploy>
+    <RemoteService>https://servercol01.fenalcovalle.co/Evolution/DeveloperService/DeveloperService.svc</RemoteService>
+    <DeployPath>
+    </DeployPath>
+    <Name>DbrScriptCbolivarUnificado_V1.4-Prueba</Name>
+    <UserName>NCADMIN</UserName>
+    <UserPassword>0xBEE185D4E2189DFD3CB2A6175A97012E</UserPassword>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>false</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
+    <Folder Include="Resources\Audio" />
+    <Folder Include="Resources\Grammar" />
+    <Folder Include="Resources\Moh" />
+    <Folder Include="Resources\Moh\Cali" />
+    <Folder Include="Resources\Moh\MohWS" />
+    <Folder Include="Resources\Moh\BolivarContigoPagos" />
+    <Folder Include="Resources\Moh\RestoPais" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Default.dbrscript">
+      <SubType>Designer</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Default.dbrscript.diagram">
+      <DependentUpon>Default.dbrscript</DependentUpon>
+    </None>
+    <Content Include="Resources\Audio\A   aaaudio Pagos PBC.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 10 05082024.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 11 05082024.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 12 05082024.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 13 05082024.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 14 05082024.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 15 05082024.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 16 05082024.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 17 05082024.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 18 %28fuera de horario Bgta%29.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 18 %28fuera de horario%29.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 19 %28solicitud doc%29.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 2 ACTUALIZADO 281222.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 2.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 20 %28paso asesor%29.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 21.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 24.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 27.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 28.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 29.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 30,1.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 42.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 43.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 44.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 45.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 46.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 47.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 48.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 49.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 50.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 51.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 52.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 53.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 54.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 55.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 56.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 57.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 58.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 59.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 6 13062023.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\Audio 6.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 60.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 61.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 62.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 63 05082024.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 63.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 8 05082024.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 8 ACTUALIZADO 16032023.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 8 ACTUALIZADO.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AUDIO 9 ACTUALIZADO.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AudioAjusteCertificado05082024.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AudioCbolivarBgtaNavidad.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\AudioCierreBolivar.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\Cierre 06052024.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\EXPERIENCIA 2.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\NUEVA CORRECCION AUDIO 0.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\NUEVA CORRECCION AUDIO 15.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\NUEVA CORRECCION AUDIO 6.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\NUEVA CORRECCION OPCION 2 AUDIO 09.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\NUEVO AUDIO OPCION 4 AUDIO 12 .wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\OPCION 0.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\OPCION 1 AUDIO 13.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\OPCION 1 AUDIO 3.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\OPCION 1 AUDIO 4_1.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\OPCION 1 AUDIO 5.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\OPCION 2 AUDIO 10.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\OPCION 2 AUDIO 14.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\OPCION 2 AUDIO 4_2.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\OPCION 2 AUDIO 4.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\OPCION 2 AUDIO 6.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\OPCION 2 AUDIO 8.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\OPCION 2 AUDIO 9.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\OPCION 3 AUDIO 11.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\OPCION 3 AUDIO 15.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\OPCION 3 AUDIO 7.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\OPCION 4 AUDIO 12.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\OPCION 4 AUDIO 16.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\OPCION 5 AUDIO 17.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\OPCION 5 AUDIO 4_3.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\Si es correcto.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\tu numero de documento es.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Audio\void" />
+    <Content Include="Resources\Grammar\void" />
+    <Content Include="Resources\Moh\BolivarContigoPagos\a floresta spot 20s 15-04-2024.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Moh\BolivarContigoPagos\a marawa spot 20s 15-04-2024.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Moh\BolivarContigoPagos\A   aaaudio Pagos PBC.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Moh\BolivarContigoPagos\COMERCIAL - EXTRANAS.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Moh\BolivarContigoPagos\COMERCIAL - LANZAMIENTO.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Moh\BolivarContigoPagos\COMERCIAL - TU NUEVO HOGAR.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Moh\BolivarContigoPagos\EXPERIENCIA 1.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Moh\Cali\LOTO.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Moh\Cali\SOLE.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Moh\RestoPais\COMERCIAL - EXTRANAS.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Moh\RestoPais\COMERCIAL - LANZAMIENTO.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Moh\RestoPais\COMERCIAL - TU NUEVO HOGAR.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Moh\RestoPais\EXPERIENCIA 1.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Moh\RestoPais\a floresta spot 20s 15-04-2024.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Moh\RestoPais\a marawa spot 20s 15-04-2024.wav">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Resources\Moh\void" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\ICR\Developer.NET\Developer.NET.DBRScript.targets" />
+</Project>

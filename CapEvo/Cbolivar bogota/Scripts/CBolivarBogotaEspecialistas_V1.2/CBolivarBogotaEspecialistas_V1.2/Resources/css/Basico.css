@@ -1,0 +1,16 @@
+﻿body
+{
+    
+    background-color: #fcfaf9;
+    color: #000000;
+}
+
+.swal2-styled.swal2-confirm.swalBtnColor {
+  color: #28a745;
+  font-weight: bold;
+  Background-color: #ffd24f;
+  border-color : #ffd24f
+}
+.swal2-styled.swal2-confirm.swalBtnColor:focus {
+    box-shadow: 0 0 0 3px #ffd24f80;
+}

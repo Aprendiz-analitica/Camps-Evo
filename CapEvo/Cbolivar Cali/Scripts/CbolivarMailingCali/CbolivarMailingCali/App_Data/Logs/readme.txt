@@ -1,0 +1,1 @@
+﻿No debe eliminar esta carpeta porque es donde se generará el registro de actividad de la aplicación.

@@ -1,0 +1,437 @@
+﻿<%@ Master Language="VB" AutoEventWireup="false" %>
+
+<%@ Register Assembly="VisualEvolutionLibrary" Namespace="Icr.Evolution.VisualEvolutionLibrary"
+    TagPrefix="evo" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<%
+    Response.CacheControl = "No-Cache"
+    Response.AddHeader("Pragma", "No-Cache")
+    Response.Expires = 0
+ %>
+
+<html xmlns="http://www.w3.org/1999/xhtml" >
+
+<head id="Head1" runat="server">
+    <title><asp:ContentPlaceHolder ID="TitleContent" runat="server" /></title>  
+
+    <link rel="Stylesheet" type="text/css" href="Resources/css/Script.css" />
+    <link rel="Stylesheet" type="text/css" href="Resources/css/Basico.css" />
+    <link rel="Stylesheet" type="text/css" href="Resources/css/bootstrap.css" />
+    <link rel="Stylesheet" type="text/css" href="Resources/css/styles.css" />
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="text/JavaScript" src="Resources/js/agentapi.js"></script>
+    <script type="text/JavaScript" src="Resources/js/timer.js"></script>
+    <script type="text/javascript" src="Resources/js/JQuery.js"></script>
+    <script type="text/javascript">
+        agentapi.AgentAppType = "<%=AgentApp.AgentAppType%>";
+        agentapi.WebAgentAuthToken = "<%=AgentApp.WebAgentAuthToken%>";
+        agentapi.WebAgentServiceUrl = "<%=AgentApp.WebAgentServiceUrl%>";
+
+    </script>
+
+    <script type="text/javascript">    
+    function Transf_Encuesta() {
+       agentapi.FastTransferActiveCall('6040');
+    }
+
+     var idCall;
+        var token;
+        var url = "https://api.fenalcovalle.com";
+        var contadorPausas = 0;
+        var idllamadaHold = 0;
+                $(document).ready(function () {
+            $("#divTemporizador").hide();
+            var temp;
+            var settings = {
+                            "url": url+"/auth/login",
+                            "method": "POST",
+                            "timeout": 0,
+                            "headers": {
+                              "username": "UsrCBolivarBgta",
+                              "password": "*CB0L1b4RB0Gt4-O22."
+                            },
+                          };
+                   $.ajax(settings).done(function (response) {
+                     token = response.token;
+                    });        
+        });
+
+        function pausar() {
+                contadorPausas++; // incrementa el contador de pausas cada vez que se llama a esta función
+                var idllamada = <%= EvoAPI.Transaction.TransactionId%>;
+                idllamadaHold = idllamada * 10 + contadorPausas;
+                var fechaActual = new Date();
+                var year = fechaActual.getFullYear();
+                var month = (fechaActual.getMonth() + 1).toString().padStart(2, '0');
+                var day = fechaActual.getDate().toString().padStart(2, '0');
+                var fechaFormateada = `${year}-${month}-${day}`;
+                var horaActual = new Date().toLocaleTimeString('en-GB', {
+                    hour12: false,
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                var tinicio = fechaFormateada + ' ' + horaActual;
+                var idagente = <%= EvoAPI.Agent.AgentId%>;
+                var idcampanya = <%= EvoAPI.Campaign.CampaignId%>;  
+                agentapi.GetActiveCall()
+                .done(function (callId) {
+                    $("#divTemporizador").show();
+                    desactivarBoton();
+                    startTimer();
+                    idCall = callId;
+                    agentapi.Hold(idCall);
+                    var insertartinicio = {
+                        "url": url+"/webservicefenalco/cbolivarbgta/ingresartiemposhold",
+                        "method": "POST",
+                        "timeout": 0,
+                        "headers": {
+                        "Authorization": "Bearer "+ token,
+                        "Content-Type": "application/json"
+                        },
+                            "data": JSON.stringify({
+                                "idTransaccion": idllamada,
+                                "tInicio": tinicio,
+                                "tFinal": tinicio,
+                                "idAgente": idagente,
+                                "idCampanya": idcampanya,
+                                "idTransaccionHold": idllamadaHold,
+                                "bdEvoAws" : false
+                            }),
+                        };
+                    $.ajax(insertartinicio).done(function (response) {
+                         
+                    });
+                })
+                .fail(function (code, cause) {
+                    alert('Error al pausar la llamada activa:. Code:' + code + '. Cause:' + cause);
+                }); 
+
+        }
+
+        function recuperar() {
+                var fechaActual = new Date();
+                var year = fechaActual.getFullYear();
+                var month = (fechaActual.getMonth() + 1).toString().padStart(2, '0');
+                var day = fechaActual.getDate().toString().padStart(2, '0');
+                var fechaFormateada = `${year}-${month}-${day}`;
+                var horaActual = new Date().toLocaleTimeString('en-GB', {
+                    hour12: false,
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                var tfinal = fechaFormateada + ' ' + horaActual;
+            $("#divTemporizador").hide();
+            stopTimer();
+            agentapi.Retrieve(idCall)
+            .done(function () {
+                        var insertartfinal = {
+                        "url": url+"/webservicefenalco/cbolivarbgta/actualizartiemposhold",
+                        "method": "POST",
+                        "timeout": 0,
+                        "headers": {
+                        "Authorization": "Bearer "+ token,
+                        "Content-Type": "application/json"
+                        },
+                            "data": JSON.stringify({
+                                "tFinal": tfinal,
+                                "idTransaccionHold": idllamadaHold,
+                                "bdEvoAws" : false
+                            }),
+                        };
+                    $.ajax(insertartfinal).done(function (response) {
+                         
+                    });
+
+            })
+            .fail(function (code, cause) {
+             alert('RealizarLlamada falló. Code:'+ code + '. Cause:'+cause);
+            });
+            activarBoton();
+        }
+
+        function desactivarBoton() {
+            // Obtener el botón por su ID
+            var botones = document.querySelectorAll('[id^="ctl00_MainContent"]');
+            for (var i = 0; i < botones.length; i++) {
+                // Desactivar el botón actual
+                botones[i].disabled = true;
+            };
+        }
+        function activarBoton() {
+            var botones = document.querySelectorAll('[id^="ctl00_MainContent"]');
+            for (var i = 0; i < botones.length; i++) {
+                // Desactivar el botón actual
+                botones[i].disabled = false;
+            };
+        }
+
+        document.oncontextmenu = function () {
+            return false;
+        };
+        document.onkeydown = function (event) {
+            event = event || window.event;
+            var doPrevent = false;
+
+            if (event.keyCode == 116                     /* F5 - Refresh */ ||
+               (event.keyCode == 82 && event.ctrlKey)    /* CTRL + R - Refresh */ ||
+                event.keyCode == 8                       /* Backspace - Navigate back */ ||
+               (event.keyCode == 37 && event.altKey)     /* ALT + Left Arrow - Navigate back */ ||
+               (event.keyCode == 121 && event.shiftKey)  /* SHIFT + F10 - Context menu */) {
+
+                var d = event.srcElement || event.target;
+
+                if (event.keyCode == 8 && ((d.tagName.toUpperCase() === 'INPUT' && (d.type.toUpperCase() === 'TEXT' || d.type.toUpperCase() === 'PASSWORD')) || d.tagName.toUpperCase() === 'TEXTAREA')) {
+                    doPrevent = d.readOnly || d.disabled;
+                }
+                else {
+                    doPrevent = true;
+                }
+            }
+            if (doPrevent) {
+                event.preventDefault();
+            }
+
+            return true;
+        };
+        function Conferencia_v2() {
+            makeHttpRequest("ConferenciaAMI.aspx")
+            .done(function (response) {
+                    if (response.estado != 'Disponible')
+                            Swal.fire({
+                                        title: 'Estado: '+ response.estado,
+                                        ///imageUrl: 'Resources/images/logo-bolivar.svg',
+                                        background: '#ffffff26',
+                                        color: '#ffffff',
+                                        customClass: {
+                                                        confirmButton: 'BtnColor'
+                                        },
+                                        imageWidth: 200,
+                                        imageHeight: 200,});
+                        else
+                            Swal.fire({
+                                        title: 'Estado: '+ response.estado,
+                                        //imageUrl: 'Resources/images/logo-bolivar.svg',
+                                        background: '#ffffff26',
+                                        color: '#ffffff',
+                                        customClass: {
+                                                        confirmButton: 'BtnColor'
+                                        },
+                                        imageWidth: 200,
+                                        imageHeight: 200,});
+
+            })
+            .fail(function (code, cause) {
+                alert("Envio ConferenciaAMI KO. Code: " + code + " , cause: " + cause);
+            });
+        }
+
+        function makeHttpRequest(sURL) {
+            /// <summary>Realiza una petición http asincrona</summary>
+            /// <param name="sURL" type="String">idTransaccion</param>
+            /// <param name="resultFunc" type="Func">Función de resultado, nos van a pasar un objeto response y un objeto deferred.</param>
+            /// <returns type="Deferred"></returns>
+            var xmlhttp;
+            if (window.XMLHttpRequest) {
+                // code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp = new XMLHttpRequest();
+            } else {
+                // code for IE6, IE5
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+
+            var deferred = new Deferred();
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4) {
+                    try {
+                        if (xmlhttp.status != 200)
+                            throw new Error("Http status." + xmlhttp.status);
+                        console.log('json', xmlhttp.responseText)
+                        var response = JSON.parse(xmlhttp.responseText);
+                        
+                        if (response.result)
+                            deferred.resolve(response);
+                        else
+                            deferred.reject(response.code, response.cause);
+                    }
+                    catch (ex) {
+                        console.log('ex', ex);
+                        deferred.reject(0, "[makeHttpRequest] {sURL=" + sURL + "}: " + ex.Message);
+                    }
+                }
+            };
+
+            xmlhttp.open("GET", sURL, true);
+            xmlhttp.send();
+
+            return deferred;
+        }
+
+
+	</script>
+
+    <asp:ContentPlaceHolder ID="HeadContent" runat="server" />
+
+    <style type="text/css">
+        .style1
+        {
+            width: 94px;
+            height: 30px;
+        }
+        .style2
+        {
+            width: 1200px;
+        }
+        button.BtnColor
+        {
+            font-size: 12px; 
+            background-color: #249E6B; 
+            width: 200px; 
+            height: 40px; 
+            background-image: none; 
+            font-weight: bold; 
+            margin-right: 0; color: #FFFFFF; 
+            border: none; 
+            border-radius:4px;
+        }
+    </style>
+
+</head>
+
+<body bgcolor="#28a745">
+
+<%
+    Dim time As DateTime = DateTime.Now
+    Dim format As String = "\Fec\ha: dd-MM-yyyy - \Hora: HH:mm"
+    Dim sImagen As String = "fas fa-phone"
+    Dim sImagenTitulo As String = "Canal telefonico"
+    
+     
+    %>	
+
+ 
+ <div>
+        <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #ed7203;">
+            <a class="navbar-brand" href="Inicio.aspx" style="background-color: #ed7203">
+                <img style="position:relative; width: 80px; top: 0px; left: 0px;" 
+            src="https://asertis.com.co/wp-content/uploads/2021/03/logo-asertis-blanco.png" 
+            alt="Asertis">
+            </a>
+              <div class="collapse navbar-collapse" id="Div1">
+                    <ul class="navbar-nav">
+                      <li class="nav-item">
+                        <span style="color: #FFFFFF; padding: 10px;  font-weight: bold;">Campaña: <%= EvoAPI.Campaign.Name%></span> 
+                      </li>
+                      <li class="nav-item">
+                        <span style="color: #FFFFFF; padding: 10px;  font-weight: bold;">Agente: <%= EvoAPI.Agent.Name%>&nbsp;<%= EvoAPI.Agent.SecondName%>&nbsp;<%= EvoAPI.Agent.LastName%></span> 
+                      </li>
+                      <li class="nav-item">
+                        <span style="color: #FFFFFF; padding: 10px;  font-weight: bold;">Transaccion:&nbsp;<%= EvoAPI.Transaction.TransactionId%></span> 
+                      </li>
+                      
+                      <li class="nav-item">
+                        <span style="color: #FFFFFF; padding: 10px;  font-weight: bold;"><%= time.ToString(format) %></span> 
+                      </li>
+
+                    </ul>
+             </div>
+
+
+                      <input id="Buttonpausar0" type="button" value="PAUSAR" onclick="pausar()"                 
+            style="font-size: 12px; background-color: #249E6B; width: 200px; height: 40px; background-image: none; font-weight: bold; margin-right: 0; color: #FFFFFF; border: 1px solid transparent; border-radius:4px"; />&nbsp;&nbsp;&nbsp;&nbsp;            
+          <input id="Buttonrecuperar0" type="button" value="RECUPERAR" onclick="recuperar()"
+style="border: 1px solid transparent; font-size: 12px; background-color: #249E6B; width: 200px; height: 40px; background-image: none; font-weight: bold; margin-right: 0; color: #FFFFFF; border-radius: 4px;" /></nav>
+            
+     </div>
+
+    
+       <div id="divTemporizador" class="container">
+            <div class="clock">
+            <input class="number" type="text" maxlength="2" value="01"><span>Min</span><input class="number" type="text" maxlength="2" value="55"><span>Sec</span>
+            </div>
+        </div>     
+    
+
+     
+    <form id="form1" runat="server">
+        <br />
+        <div  style="width:100%; margin-left:auto; margin-right:auto;">
+        <div style="width:70%; margin-left:auto; margin-right:auto;">                         
+                    <div class="nav-item dropdown" 
+                        style = "background-color: #ED7203; width:220px; height:40px; font-size:16px; text-align: center; top: 0px; left: 0px;">
+                    <a aria-expanded="false" aria-haspopup="true" style ="color:#FFFFFF;" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button"> ESTADOS</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="#" style ="color:#249E6B;" onclick="Conferencia_v2()">SEGUNDO ANILLO</a>
+                            <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server"></asp:ContentPlaceHolder>
+                        </div>
+                    </div>      
+                    <div class="nav-item dropdown mt-2" 
+                        style = "background-color: #ED7203; width:220px; height:40px; font-size:16px; text-align: center; top: 0px; left: 0px;">
+                    <a aria-expanded="false" aria-haspopup="true" style ="color:#FFFFFF;" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button"> TRANSFERENCIAS</a>
+                        <div class="dropdown-menu">                           
+                            <a class="dropdown-item" href="#" style ="color:#249E6B;" onclick="Transf_Encuesta()">ENCUESTA</a>
+                            <asp:ContentPlaceHolder ID="ContentPlaceHolder2" runat="server"></asp:ContentPlaceHolder>
+                        </div>
+                    </div>        
+        </div>
+        </div>
+        <br />
+
+     <table style="width:100%; margin-left: auto; margin-right:auto;">
+        <tbody>
+
+            <tr>
+                <td >
+                <asp:ContentPlaceHolder ID="MainContent" runat="server"></asp:ContentPlaceHolder>
+                </td>
+            </tr>
+
+
+
+            
+        </tbody>
+    </table> 
+
+    
+<!-- <div class="off-canvas-overlay"></div> -->
+    <div class="off-canvas">
+      <div class="box box-primary">
+                
+                    <div class="box-header with-border">
+                         <div class="box-tools pull-right">
+                            </div>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body">
+                        
+                       
+                    </div>
+                    <!-- /.box-body -->
+                 </div>
+       </div>
+ </form>
+    <div>
+        <asp:ContentPlaceHolder ID="FooterContent" runat="server"></asp:ContentPlaceHolder>
+    </div>
+</body>
+
+<script runat="server">
+    
+    Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        
+        If Not EvoAPI.IsLoaded Then
+            Message.ShowError("Las variables se han perdido por inactividad de la sesion. Puede reiniciar el argumentario pulsando el boton ""Inicio""")
+        End If
+        
+    End Sub
+    
+</script>
+
+</html>

@@ -1,0 +1,92 @@
+﻿<%@ Master Language="VB" AutoEventWireup="false" %>
+
+<%@ Register Assembly="VisualEvolutionLibrary" Namespace="Icr.Evolution.VisualEvolutionLibrary"
+    TagPrefix="evo" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<%
+    Response.CacheControl = "No-Cache"
+    Response.AddHeader("Pragma", "No-Cache")
+    Response.Expires = 0
+ %>
+
+<html xmlns="http://www.w3.org/1999/xhtml" >
+
+<head id="Head1" runat="server">
+    <title><asp:ContentPlaceHolder ID="TitleContent" runat="server" /></title>  
+
+    <link rel="Stylesheet" type="text/css" href="Resources/css/Script.css" />
+    <link rel="Stylesheet" type="text/css" href="Resources/css/Basico.css" />
+	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="text/JavaScript" src="Resources/js/agentapi.js"></script>
+    <script type="text/javascript">
+        agentapi.AgentAppType = "<%=AgentApp.AgentAppType%>";
+        agentapi.WebAgentAuthToken = "<%=AgentApp.WebAgentAuthToken%>";
+        agentapi.WebAgentServiceUrl = "<%=AgentApp.WebAgentServiceUrl%>";
+    </script>
+
+    <script type="text/javascript">
+            
+    </script>
+
+    <asp:ContentPlaceHolder ID="HeadContent" runat="server" />
+
+</head>
+
+<body>	
+    <form id="form1" runat="server">
+    
+    <%
+        Dim time As DateTime = DateTime.Now
+        Dim format As String = "\Fec\ha: dd-MM-yyyy - \Hora: HH:mm"
+        Dim sImagen As String = "fas fa-phone"
+        Dim sImagenTitulo As String = "Canal telefonico"
+    %>
+    <table style="margin-left: auto; margin-right:auto;">
+        <tbody>
+            <tr>
+            <td colspan = "3" style="padding: 5px 0px 5px 0px; text-align: center">
+                 <img src="https://www.comfenalcovalle.com.co/wp-content/uploads/2019/08/Recurso-1.png" />
+            </td>
+            </tr>
+
+            <tr>
+                <td style="padding: 5px 0px 5px 0px; width: 50%; color: #0c5e16; font-size: 16px; font-weight: bold;" 
+                    colspan="2">
+                    Transaccion: <%= Gestion.Transaccion.IdTransaccion%>
+                    
+                </td>
+                <td style="padding: 5px 0px 5px 0px; width: 50%; color: #0c5e16; font-size: 16px; font-weight: bold; text-align: right;">
+                    <%= time.ToString(format) %>
+                </td>
+            </tr>
+            <tr>
+                <td colspan ="3">
+                <asp:ContentPlaceHolder ID="MainContent" runat="server"></asp:ContentPlaceHolder>
+                </td>
+            </tr>
+            <tr>
+                <td colspan ="3">
+                    <asp:ContentPlaceHolder ID="FooterContent" runat="server"></asp:ContentPlaceHolder>
+                </td>
+            </tr>
+            
+        </tbody>
+    </table> 
+ </form>
+</body>
+
+<script runat="server">
+    
+    Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        
+        If Not EvoAPI.IsLoaded Then
+            Message.ShowError("Las variables se han perdido por inactividad de la sesion. Puede reiniciar el argumentario pulsando el boton ""Inicio""")
+        End If
+        
+    End Sub
+
+</script>
+
+</html>

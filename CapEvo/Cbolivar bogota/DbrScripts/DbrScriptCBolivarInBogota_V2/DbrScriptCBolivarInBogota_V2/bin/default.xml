@@ -1,0 +1,138 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<strategy_script version="1.0" name="Main" >
+
+
+	<block name="main" >
+		<property name="documento" value="-" /> 
+		<timeconditions label="Horario laboral" property="in_service">
+			<timecondition time_start="07:30" time_finish="18:30" week_day_start="1" week_day_finish="5" />
+			<timecondition time_start="08:00" time_finish="16:00" week_day_start="6" week_day_finish="6" />
+			<timecondition time_start="10:00" time_finish="16:00" week_day_start="7" week_day_finish="7" />
+		</timeconditions> 
+		<timeconditions label="Festivos" property="non_working_day">
+			<timecondition time_start="10:00" time_finish="16:00" month_day="20" month="06" />
+		</timeconditions> 
+		<goto if_condition="${not in_service and not non_working_day}" block="main" task_label="LLAMADA FUERA HORARIOS" /> 
+		<property label="LLAMADA COLGADA EN IVR" name="interaction.transaction.closereason" value="300" /> 
+		<play label="BIENVENIDA" filename="Resources/Audio/1. BIENVENIDA.wav" /> 
+		<play label="Informacion 1septiembre" filename="Resources/Audio/1 audio hold 1ro sep.wav" /> 
+		<property name="bucle" value="0" /> 
+		<play_and_get_digits label="NIVEL 1 OPCIONES" filename="Resources/Audio/2. NIVEL 1 OPCIONES.wav" received_digits_property="nivel1" max_digits="1" attempts="3" timeout="3" /> 
+		<switchcase label="SC NIVEL 1 OPCIONES" value="${nivel1}">
+			<case value="0" block="main" task_label="NIVEL 1 OPCIONES" />
+			<case value="1" block="main" task_label="NIVEL 2 DOCUMENTO1" />
+			<case value="2" block="main" task_label="NIVEL 2 DOCUMENTO2" />
+			<case value="3" block="main" task_label="NIVEL 2 DOCUMENTO3" />
+			<case value="4" block="main" task_label="NIVEL 2 DOCUMENTO4" />
+		</switchcase> 
+		<switchcase label="SC2 SC NIVEL 1 OPCIONES" value="${nivel1}">
+			<case value="5" block="main" task_label="NIVEL 2 DOCUMENTO5" />
+			<case value="8" block="main" task_label="property1" />
+			<case value="6" block="main" task_label="property2" />
+		</switchcase> 
+		<play label="OPCION NO VALIDA" filename="Resources/Audio/12. OPCION NO VALIDA 1.wav" /> 
+		<property name="bucle" value="${int::parse(bucle) + 1}" /> 
+		<goto if_condition="${int::parse(bucle) &lt; 3}" block="main" task_label="NIVEL 1 OPCIONES" /> 
+		<hangup /> 
+		<break /> 
+		<play_and_get_digits label="NIVEL 2 DOCUMENTO1" failonerror="false" filename="Resources/Audio/3. NIVEL 2 DOCUMENTO.wav" received_digits_property="doc" max_digits="12" timeout="3" /> 
+		<settransactionvalue key="Numdoc1" value="${doc}" /> 
+		<play label="NIVEL 3.1 TRANSFERENCIA1" filename="Resources/Audio/4. NIVEL 3.1 TRANSFERENCIA.wav" /> 
+		<property name="idCampanya" value="100000263" /> 
+		<call block="query_customer_table" /> 
+		<escape_command label="escape_command1" command="SET VARIABLE &quot;CHANNEL(musicclass)&quot; &quot;icr.DbrScriptCbolivarInBogota_v2.construbolivarbgta&quot;" result_refid="escape_refid" /> 
+		<queue idagent="${strategy.idagent}" priority="${strategy.priority}" handicap="${strategy.handicap}" idcustomer="${id_sujeto}" idcampaign="${idCampanya}" /> 
+		<property name="interaction.transaction.closereason" value="10" /> 
+		<give_music class="construbolivarbgta" /> 
+		<sleep hours="1" /> 
+		<break /> 
+		<play_and_get_digits label="NIVEL 2 DOCUMENTO2" failonerror="false" filename="Resources/Audio/3. NIVEL 2 DOCUMENTO.wav" received_digits_property="doc" max_digits="12" timeout="3" /> 
+		<settransactionvalue key="Numdoc2" value="${doc}" /> 
+		<play label="NIVEL 3.1 TRANSFERENCIA2" filename="Resources/Audio/4. NIVEL 3.1 TRANSFERENCIA.wav" /> 
+		<property name="idCampanya" value="100000269" /> 
+		<call block="query_customer_table" /> 
+		<escape_command label="escape_command2" command="SET VARIABLE &quot;CHANNEL(musicclass)&quot; &quot;icr.DbrScriptCbolivarInBogota_v2.construbolivarbgta&quot;" result_refid="escape_refid" /> 
+		<queue idagent="${strategy.idagent}" priority="${strategy.priority}" handicap="${strategy.handicap}" idcustomer="${id_sujeto}" idcampaign="${idCampanya}" /> 
+		<property name="interaction.transaction.closereason" value="10" /> 
+		<give_music class="construbolivarbgta" /> 
+		<sleep hours="1" /> 
+		<break /> 
+		<play_and_get_digits label="NIVEL 2 DOCUMENTO3" failonerror="false" filename="Resources/Audio/3. NIVEL 2 DOCUMENTO.wav" received_digits_property="doc" max_digits="12" timeout="3" /> 
+		<settransactionvalue key="Numdoc3" value="${doc}" /> 
+		<play label="NIVEL 3.2 MANUAL PROPIETARIO" filename="Resources/Audio/5. NIVEL 3.2 MANUAL PROPIETARIO.wav" /> 
+		<property name="idCampanya" value="100000265" /> 
+		<call block="query_customer_table" /> 
+		<escape_command label="escape_command3" command="SET VARIABLE &quot;CHANNEL(musicclass)&quot; &quot;icr.DbrScriptCbolivarInBogota_v2.construbolivarbgta&quot;" result_refid="escape_refid" /> 
+		<queue idagent="${strategy.idagent}" priority="${strategy.priority}" handicap="${strategy.handicap}" idcustomer="${id_sujeto}" idcampaign="${idCampanya}" /> 
+		<property name="interaction.transaction.closereason" value="10" /> 
+		<give_music class="construbolivarbgta" /> 
+		<sleep hours="1" /> 
+		<break /> 
+		<play_and_get_digits label="NIVEL 2 DOCUMENTO4" failonerror="false" filename="Resources/Audio/3. NIVEL 2 DOCUMENTO.wav" received_digits_property="doc" max_digits="12" timeout="3" /> 
+		<settransactionvalue key="Numdoc4" value="${doc}" /> 
+		<play label="NIVEL 3.3 CALIFICACION SERVICIO - SECO" filename="Resources/Audio/6. NIVEL 3.3 CALIFICACION SERVICIO - SECO.wav" /> 
+		<property name="idCampanya" value="100000266" /> 
+		<call block="query_customer_table" /> 
+		<escape_command label="escape_command4" command="SET VARIABLE &quot;CHANNEL(musicclass)&quot; &quot;icr.DbrScriptCbolivarInBogota_v2.construbolivarbgta&quot;" result_refid="escape_refid" /> 
+		<queue idagent="${strategy.idagent}" priority="${strategy.priority}" handicap="${strategy.handicap}" idcustomer="${id_sujeto}" idcampaign="${idCampanya}" /> 
+		<property name="interaction.transaction.closereason" value="10" /> 
+		<give_music class="construbolivarbgta" /> 
+		<sleep hours="1" /> 
+		<break /> 
+		<play_and_get_digits label="NIVEL 2 DOCUMENTO5" failonerror="false" filename="Resources/Audio/3. NIVEL 2 DOCUMENTO.wav" received_digits_property="doc" max_digits="12" timeout="3" /> 
+		<settransactionvalue key="Numdoc5" value="${doc}" /> 
+		<play label="NIVEL 3.4 SOLICITUDES" filename="Resources/Audio/7. NIVEL 3.4 SOLICITUDES.wav" /> 
+		<property name="idCampanya" value="100000267" /> 
+		<call block="query_customer_table" /> 
+		<escape_command label="escape_command5" command="SET VARIABLE &quot;CHANNEL(musicclass)&quot; &quot;icr.DbrScriptCbolivarInBogota_v2.construbolivarbgta&quot;" result_refid="escape_refid" /> 
+		<queue idagent="${strategy.idagent}" priority="${strategy.priority}" handicap="${strategy.handicap}" idcustomer="${id_sujeto}" idcampaign="${idCampanya}" /> 
+		<property name="interaction.transaction.closereason" value="10" /> 
+		<give_music class="construbolivarbgta" /> 
+		<sleep hours="1" /> 
+		<break /> 
+		<property label="property1" name="idCampanya" value="100000274" /> 
+		<escape_command label="escape_command6" command="SET VARIABLE &quot;CHANNEL(musicclass)&quot; &quot;icr.dbrscriptcbolivarbogota_v1.construbolivarbgta&quot;" result_refid="escape_refid" /> 
+		<queue idagent="${strategy.idagent}" priority="${strategy.priority}" handicap="${strategy.handicap}" idcampaign="${idCampanya}" /> 
+		<property name="interaction.transaction.closereason" value="10" /> 
+		<give_music class="construbolivarbgta" /> 
+		<sleep hours="1" /> 
+		<break /> 
+		<property label="LLAMADA FUERA HORARIOS" name="interaction.transaction.closereason" value="301" /> 
+		<play_and_get_digits label="AudioDespedida" failonerror="false" filename="Resources/Audio/P. AUDIO 2 120622.wav" received_digits_property="opcallback" max_digits="1" timeout="3" /> 
+		<goto if_condition="${opcallback == '1'}" block="main" task_label="Callback" /> 
+		<hangup /> 
+		<break /> 
+		<play_and_get_digits label="Callback" failonerror="false" filename="Resources/Audio/P. AUDIO 3  NUMERO - SECO.wav" received_digits_property="numtel" max_digits="12" timeout="3" /> 
+		<play filename="Resources/Audio/P. 4  NUMERO - SECO .wav" /> 
+		<play_tts>
+			<ssml>
+				<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="es-ES">
+					<p><prosody rate="slow"> <say-as interpret-as="characters" format="characters"> ${numtel} </say-as> </prosody></p>
+				</speak>
+		
+			</ssml>
+		</play_tts> 
+		<play_and_get_digits label="ConfirmarCallback" failonerror="false" filename="Resources/Audio/P. 5 CONFIRMACION - SECO.wav" received_digits_property="confirmarcb" max_digits="1" timeout="3" /> 
+		<goto if_condition="${confirmarcb == '1'}" block="main" task_label="play1" /> 
+		<goto block="main" task_label="Callback" /> 
+		<break /> 
+		<play label="play1" filename="Resources/Audio/P. AUDIO DESPEDIDA - CALL BACK.wav" /> 
+		<goto block="callback" /> 
+		<break /> 
+		<property label="property2" name="interaction.transaction.closereason" value="303" /> 
+		<transfer_to label="transfer_to1" to="*307770007" /> 
+	</block>
+	<block name="query_customer_table" >
+		<sql label="InsertNumdoc" statement="insert into __CedulasCbolivarBgta (idtransaccion, numdoc,numtel) values (${interaction.idtransaction},'${doc}','${interaction.from}')" /> 
+		<property name="id_sujeto" value="0" /> 
+		<goto if_condition="${doc == ''}" block="query_customer_table" task_label="echo1" /> 
+		<sql statement="DECLARE @numdoc VARCHAR(13);&#xD;&#xA;DECLARE @idCampanya  NUMERIC(10,0);&#xD;&#xA;DECLARE @temnd VARCHAR(13);&#xD;&#xA;SET @idCampanya= ${idCampanya}&#xD;&#xA;SET @numdoc = ${doc}&#xD;&#xA;SET @temnd = (SELECT CASE WHEN @numdoc = '' THEN '0' ELSE @numdoc END AS newnumdoc)&#xD;&#xA;&#xD;&#xA;SELECT C.idsujeto as idsujeto FROM clientes C JOIN tbidentidadsujetocampanya ISC on C.idsujeto=ISC.idsujeto &#xD;&#xA;       WHERE (ISC.IDCAMPANYA =@idCampanya And c.idsujeto &gt;= 0) AND&#xD;&#xA;                c.IDORIGINAL=@temnd;" cmdtimeout="10" result_refid="Sujeto_refid" /> 
+		<property if_condition="${ data-table-type::get-row-count( 'Sujeto_refid' )  &gt; 0 }" name="id_sujeto" value="${ data-table-type::get-value( 'Sujeto_refid', 0 ,'idsujeto') }" /> 
+		<echo label="echo1" message="idSujeto for ${interaction.from} is ${id_sujeto}" /> 
+	</block>
+	<block name="callback" >
+		<sql label="sql2" statement="&#xD;&#xA;insert into __callback_CbolivarBgta (idTransaction,teloori) values (${interaction.idtransaction},'${numtel}')" /> 
+		<hangup /> 
+	</block>
+
+</strategy_script>
